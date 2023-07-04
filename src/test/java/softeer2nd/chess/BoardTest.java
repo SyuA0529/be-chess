@@ -1,6 +1,5 @@
 package softeer2nd.chess;
 
-
 import org.junit.jupiter.api.Test;
 import softeer2nd.chess.pieces.Pawn;
 
@@ -18,5 +17,24 @@ class BoardTest {
             assertThat(board.size()).isEqualTo(i + 1);
             assertThat(board.get(i)).isEqualTo(pawn);
         }
+    }
+
+    @Test
+    void initialize() {
+        Board board = new Board();
+        board.initialize();
+
+        assertThat(board.getWhitePawnsResult()).isEqualTo("pppppppp");
+        assertThat(board.getBlackPawnsResult()).isEqualTo("PPPPPPPP");
+        assertThat(board.print()).isEqualTo(
+                "........\n" +
+                        "PPPPPPPP\n" +
+                        "........\n" +
+                        "........\n" +
+                        "........\n" +
+                        "........\n" +
+                        "pppppppp\n" +
+                        "........"
+        );
     }
 }
