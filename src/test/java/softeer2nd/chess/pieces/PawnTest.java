@@ -9,9 +9,8 @@ public class PawnTest {
     @Test
     @DisplayName("흰색 폰과 검은색 폰이 생성되어야 한다")
     void create() {
-        String[] colors = {Pawn.WHITE_COLOR, Pawn.BLACK_COLOR};
-        for (String color : colors)
-            verifyPawn(new Pawn(color), color);
+        verifyPawn(Pawn.WHITE_COLOR, Pawn.WHITE_REPRESENTATION);
+        verifyPawn(Pawn.BLACK_COLOR, Pawn.BLACK_PRESENTATION);
     }
 
     @Test
@@ -21,7 +20,10 @@ public class PawnTest {
         assertThat(pawn.getColor()).isEqualTo(Pawn.WHITE_COLOR);
     }
 
-    private static void verifyPawn(Pawn pawn, String color) {
+
+    private static void verifyPawn(String color, String representation) {
+        Pawn pawn = new Pawn(color);
         assertThat(pawn.getColor()).isEqualTo(color);
+        assertThat(pawn.getRepresentation()).isEqualTo(representation);
     }
 }
