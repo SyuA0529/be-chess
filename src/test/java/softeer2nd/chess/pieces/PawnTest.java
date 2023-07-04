@@ -9,8 +9,8 @@ public class PawnTest {
     @Test
     @DisplayName("흰색 폰과 검은색 폰이 생성되어야 한다")
     void create() {
-        verifyPawn(Pawn.WHITE_COLOR, Pawn.WHITE_REPRESENTATION);
-        verifyPawn(Pawn.BLACK_COLOR, Pawn.BLACK_PRESENTATION);
+        verifyPawn(Pawn.WHITE_COLOR, Pawn.REPRESENTATION.toLowerCase());
+        verifyPawn(Pawn.BLACK_COLOR, Pawn.REPRESENTATION.toUpperCase());
     }
 
     @Test

@@ -3,8 +3,7 @@ package softeer2nd.chess.pieces;
 public class Pawn {
     public static final String WHITE_COLOR = "white";
     public static final String BLACK_COLOR = "black";
-    public static final String WHITE_REPRESENTATION = "p";
-    public static final String BLACK_PRESENTATION = "P";
+    public static final String REPRESENTATION = "p";
 
     private final String color;
 
@@ -21,6 +20,6 @@ public class Pawn {
     }
 
     public String getRepresentation() {
-        return getColor().equals(WHITE_COLOR) ? WHITE_REPRESENTATION : BLACK_PRESENTATION;
+        return getColor().equals(WHITE_COLOR) ? REPRESENTATION.toLowerCase() : REPRESENTATION.toUpperCase();
     }
 }

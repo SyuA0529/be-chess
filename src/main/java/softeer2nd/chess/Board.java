@@ -34,7 +34,6 @@ public class Board {
         }
     }
 
-    //TODO: 맘에 안듬
     public String print() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < SIDE_LENGTH; i++) {
