@@ -20,10 +20,10 @@ public class PieceTest {
         verifyPiece(Piece.createWhiteBishop(), Piece.WHITE_COLOR, Piece.WHITE_BISHOP_REPRESENTATION);
         verifyPiece(Piece.createBlackBishop(), Piece.BLACK_COLOR, Piece.BLACK_BISHOP_REPRESENTATION);
 
-        verifyPiece(Piece.createWhithQueen(), Piece.WHITE_COLOR, Piece.WHITE_QUEEN_REPRESENTATION);
+        verifyPiece(Piece.createWhiteQueen(), Piece.WHITE_COLOR, Piece.WHITE_QUEEN_REPRESENTATION);
         verifyPiece(Piece.createBlackQueen(), Piece.BLACK_COLOR, Piece.BLACK_QUEEN_REPRESENTATION);
 
-        verifyPiece(Piece.createWhithKing(), Piece.WHITE_COLOR, Piece.WHITE_KING_REPRESENTATION);
+        verifyPiece(Piece.createWhiteKing(), Piece.WHITE_COLOR, Piece.WHITE_KING_REPRESENTATION);
         verifyPiece(Piece.createBlackKing(), Piece.BLACK_COLOR, Piece.BLACK_KING_REPRESENTATION);
     }
 
@@ -32,7 +32,7 @@ public class PieceTest {
     void testVerifyPieceColor() {
         Piece[] whitePieces = {
                 Piece.createWhitePawn(), Piece.createWhiteKnight(), Piece.createWhiteRook(),
-                Piece.createWhiteBishop(), Piece.createWhithQueen(), Piece.createWhithKing()
+                Piece.createWhiteBishop(), Piece.createWhiteQueen(), Piece.createWhiteKing()
         };
 
         Piece[] blackPieces = {

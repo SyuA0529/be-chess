@@ -49,11 +49,11 @@ public class Piece {
         return new Piece(Piece.WHITE_COLOR, Piece.WHITE_BISHOP_REPRESENTATION);
     }
 
-    public static Piece createWhithQueen() {
+    public static Piece createWhiteQueen() {
         return new Piece(Piece.WHITE_COLOR, Piece.WHITE_QUEEN_REPRESENTATION);
     }
 
-    public static Piece createWhithKing() {
+    public static Piece createWhiteKing() {
         return new Piece(Piece.WHITE_COLOR, Piece.WHITE_KING_REPRESENTATION);
     }
 
@@ -87,5 +87,9 @@ public class Piece {
 
     public boolean isBlack() {
         return getColor().equals(BLACK_COLOR);
+    }
+
+    public enum Color {
+        WHITE, BLACK, NO_COLOR;
     }
 }
