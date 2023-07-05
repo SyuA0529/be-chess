@@ -88,8 +88,4 @@ public class Piece {
     public boolean isBlack() {
         return getColor().equals(BLACK_COLOR);
     }
-
-    public enum Color {
-        WHITE, BLACK, NO_COLOR;
-    }
 }
