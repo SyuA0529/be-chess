@@ -10,60 +10,84 @@ import static softeer2nd.utils.StringUtils.*;
 public class Board {
     private static final int SIDE_LENGTH = 8;
 
-    private final List<Piece> whitePieces = new ArrayList<>();
-    private final List<Piece> blackPieces = new ArrayList<>();
+    private final List<Rank> board = new ArrayList<>();
 
     public void initialize() {
-        initWhitePiece();
-        initBlackPieces();
+        board.clear();
+        initBlackEdgeRank();
+        initPawnRank(Piece.Color.BLACK);
+        for (int i = 0; i < SIDE_LENGTH - 4; i++)
+            initBlankRank();
+        initPawnRank(Piece.Color.WHITE);
+        initWhiteEdgeRank();
     }
 
-    private void initWhitePiece() {
-        whitePieces.clear();
-        for (int i = 0; i < SIDE_LENGTH; i++) whitePieces.add(Piece.createWhitePawn());
-        whitePieces.add(Piece.createWhiteRook());
-        whitePieces.add(Piece.createWhiteKnight());
-        whitePieces.add(Piece.createWhiteBishop());
-        whitePieces.add(Piece.createWhiteQueen());
-        whitePieces.add(Piece.createWhiteKing());
-        whitePieces.add(Piece.createWhiteBishop());
-        whitePieces.add(Piece.createWhiteKnight());
-        whitePieces.add(Piece.createWhiteRook());
+    private void initWhiteEdgeRank() {
+        Rank rank = new Rank();
+        rank.add(Piece.createWhiteRook());
+        rank.add(Piece.createWhiteKnight());
+        rank.add(Piece.createWhiteBishop());
+        rank.add(Piece.createWhiteQueen());
+        rank.add(Piece.createWhiteKing());
+        rank.add(Piece.createWhiteBishop());
+        rank.add(Piece.createWhiteKnight());
+        rank.add(Piece.createWhiteRook());
+        board.add(rank);
     }
 
-    private void initBlackPieces() {
-        blackPieces.clear();
-        for (int i = 0; i < SIDE_LENGTH; i++) blackPieces.add(Piece.createBlackPawn());
-        blackPieces.add(Piece.createBlackRook());
-        blackPieces.add(Piece.createBlackKnight());
-        blackPieces.add(Piece.createBlackBishop());
-        blackPieces.add(Piece.createBlackQueen());
-        blackPieces.add(Piece.createBlackKing());
-        blackPieces.add(Piece.createBlackBishop());
-        blackPieces.add(Piece.createBlackKnight());
-        blackPieces.add(Piece.createBlackRook());
+    private void initBlackEdgeRank() {
+        Rank rank = new Rank();
+        rank.add(Piece.createBlackRook());
+        rank.add(Piece.createBlackKnight());
+        rank.add(Piece.createBlackBishop());
+        rank.add(Piece.createBlackQueen());
+        rank.add(Piece.createBlackKing());
+        rank.add(Piece.createBlackBishop());
+        rank.add(Piece.createBlackKnight());
+        rank.add(Piece.createBlackRook());
+        board.add(rank);
+    }
+
+    private void initPawnRank(Piece.Color color) {
+        Rank rank = new Rank();
+        for (int i = 0; i < SIDE_LENGTH; i++)
+            rank.add(color.equals(Piece.Color.WHITE) ?
+                    Piece.createWhitePawn() : Piece.createBlackPawn());
+        board.add(rank);
+    }
+
+    private void initBlankRank() {
+        Rank rank = new Rank();
+        for (int i = 0; i < SIDE_LENGTH; i++)
+            rank.add(Piece.createBlank());
+        board.add(rank);
     }
 
     public String showBoard() {
-        String blankRank = "........";
         StringBuilder sb = new StringBuilder();
-        sb.append(getPrintLine(blackPieces.subList(SIDE_LENGTH, blackPieces.size())));
-        sb.append(getPrintLine(blackPieces.subList(0, SIDE_LENGTH)));
-
-        sb.append(appendNewLine(blankRank).repeat(4));
-
-        sb.append(getPrintLine(whitePieces.subList(0, SIDE_LENGTH)));
-        sb.append(getPrintLine(whitePieces.subList(SIDE_LENGTH, whitePieces.size())));
+        board.forEach(r -> sb.append(appendNewLine(r.showRank())));
         return sb.toString();
     }
 
-    private static String getPrintLine(List<Piece> pieces) {
-        StringBuilder sb = new StringBuilder();
-        pieces.forEach(p -> sb.append(p.getRepresentation()));
-        return appendNewLine(sb.toString());
+    public int pieceCount() {
+        return board.stream().mapToInt(Rank::pieceCount).sum();
     }
 
-    public int pieceCount() {
-        return whitePieces.size() + blackPieces.size();
+    private static class Rank extends ArrayList<Piece> {
+        public Piece get(char row) {
+            if(!Character.isAlphabetic(row))
+                throw new RuntimeException();
+            return get(Character.toLowerCase(row) - 'a');
+        }
+
+        public String showRank() {
+            StringBuilder sb = new StringBuilder();
+            this.forEach(p -> sb.append(p.getRepresentation()));
+            return sb.toString();
+        }
+
+        public int pieceCount() {
+            return (int) this.stream().filter(p -> p.getType() != Piece.Type.NO_PIECE).count();
+        }
     }
 }
