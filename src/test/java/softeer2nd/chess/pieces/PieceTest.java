@@ -1,30 +1,51 @@
 package softeer2nd.chess.pieces;
 
 import org.junit.jupiter.api.*;
+import softeer2nd.chess.pieces.Piece.Type;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PieceTest {
     @Test
-    public void create_piece() {
-        verifyPiece(Piece.createWhitePawn(), Piece.WHITE_COLOR, Piece.WHITE_PAWN_REPRESENTATION);
-        verifyPiece(Piece.createBlackPawn(), Piece.BLACK_COLOR, Piece.BLACK_PAWN_REPRESENTATION);
+    @DisplayName("eunm으로부터 Representation 가져오기")
+    void getRepresentationFromEnumTest() {
+        assertThat(Piece.Type.PAWN.getWhiteRepresentation()).isEqualTo('p');
+        assertThat(Piece.Type.ROOK.getWhiteRepresentation()).isEqualTo('r');
+        assertThat(Piece.Type.KNIGHT.getWhiteRepresentation()).isEqualTo('n');
+        assertThat(Piece.Type.BISHOP.getWhiteRepresentation()).isEqualTo('b');
+        assertThat(Piece.Type.QUEEN.getWhiteRepresentation()).isEqualTo('q');
+        assertThat(Piece.Type.KING.getWhiteRepresentation()).isEqualTo('k');
 
-        verifyPiece(Piece.createWhiteKnight(), Piece.WHITE_COLOR, Piece.WHITE_KNIGHT_REPRESENTATION);
-        verifyPiece(Piece.createBlackKnight(), Piece.BLACK_COLOR, Piece.BLACK_KNIGHT_REPRESENTATION);
+        assertThat(Piece.Type.PAWN.getBlackRepresentation()).isEqualTo('P');
+        assertThat(Piece.Type.ROOK.getBlackRepresentation()).isEqualTo('R');
+        assertThat(Piece.Type.KNIGHT.getBlackRepresentation()).isEqualTo('N');
+        assertThat(Piece.Type.BISHOP.getBlackRepresentation()).isEqualTo('B');
+        assertThat(Piece.Type.QUEEN.getBlackRepresentation()).isEqualTo('Q');
+        assertThat(Piece.Type.KING.getBlackRepresentation()).isEqualTo('K');
+    }
+    
+    @Test
+    @DisplayName("기물 생성")
+    void createPiece() {
+        verifyPiece(Piece.createWhitePawn(), Piece.createBlackPawn(), Type.PAWN);
+        verifyPiece(Piece.createWhiteKnight(), Piece.createBlackKnight(), Type.KNIGHT);
+        verifyPiece(Piece.createWhiteRook(), Piece.createBlackRook(), Type.ROOK);
+        verifyPiece(Piece.createWhiteBishop(), Piece.createBlackBishop(), Type.BISHOP);
+        verifyPiece(Piece.createWhiteQueen(), Piece.createBlackQueen(), Type.QUEEN);
+        verifyPiece(Piece.createWhiteKing(), Piece.createBlackKing(), Type.KING);
 
-        verifyPiece(Piece.createWhiteRook(), Piece.WHITE_COLOR, Piece.WHITE_ROOK_REPRESENTATION);
-        verifyPiece(Piece.createBlackRook(), Piece.BLACK_COLOR, Piece.BLACK_ROOK_REPRESENTATION);
+        Piece blank = Piece.createBlank();
+        assertThat(blank.isWhite()).isFalse();
+        assertThat(blank.isBlack()).isFalse();
+        assertThat(blank.getType()).isEqualTo(Type.NO_PIECE);
+    }
 
-        verifyPiece(Piece.createWhiteBishop(), Piece.WHITE_COLOR, Piece.WHITE_BISHOP_REPRESENTATION);
-        verifyPiece(Piece.createBlackBishop(), Piece.BLACK_COLOR, Piece.BLACK_BISHOP_REPRESENTATION);
+    private void verifyPiece(final Piece whitePiece, final Piece blackPiece, final Type type) {
+        assertThat(whitePiece.isWhite()).isTrue();
+        assertThat(whitePiece.getType()).isEqualTo(type);
 
-        verifyPiece(Piece.createWhiteQueen(), Piece.WHITE_COLOR, Piece.WHITE_QUEEN_REPRESENTATION);
-        verifyPiece(Piece.createBlackQueen(), Piece.BLACK_COLOR, Piece.BLACK_QUEEN_REPRESENTATION);
-
-        verifyPiece(Piece.createWhiteKing(), Piece.WHITE_COLOR, Piece.WHITE_KING_REPRESENTATION);
-        verifyPiece(Piece.createBlackKing(), Piece.BLACK_COLOR, Piece.BLACK_KING_REPRESENTATION);
+        assertThat(blackPiece.isBlack()).isTrue();
+        assertThat(blackPiece.getType()).isEqualTo(type);
     }
 
     @Test
@@ -50,10 +71,5 @@ public class PieceTest {
             assertThat(blackPiece.isWhite()).isFalse();
             assertThat(blackPiece.isBlack()).isTrue();
         }
-    }
-
-    private void verifyPiece(final Piece piece, final String color, final char representation) {
-        assertEquals(color, piece.getColor());
-        assertEquals(representation, piece.getRepresentation());
     }
 }
