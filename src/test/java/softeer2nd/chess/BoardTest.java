@@ -22,7 +22,7 @@ public class BoardTest {
     @Test
     public void create() {
         board.initialize();
-        assertEquals(32, board.totalPieceCount());
+        assertEquals(32, board.totalPiecesCount());
         String blankRank = appendNewLine("........");
         assertEquals(
                 appendNewLine("RNBQKBNR") +
@@ -43,10 +43,10 @@ public class BoardTest {
 
         for (Piece.Color color : colors) {
             for (Piece.Type hasOnePieceType : hasOnePieceTypes)
-                assertThat(board.countSpecificType(color, hasOnePieceType)).isEqualTo(1);
+                assertThat(board.countSpecificTypePieces(color, hasOnePieceType)).isEqualTo(1);
 
             for (Piece.Type hasTwoPieceType : hasTwoPieceTypes)
-                assertThat(board.countSpecificType(color, hasTwoPieceType)).isEqualTo(2);
+                assertThat(board.countSpecificTypePieces(color, hasTwoPieceType)).isEqualTo(2);
         }
     }
     

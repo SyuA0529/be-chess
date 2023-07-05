@@ -79,13 +79,13 @@ public class Board {
         return sb.toString();
     }
 
-    public int totalPieceCount() {
-        return board.stream().mapToInt(Rank::totalPieceCount).sum();
+    public int totalPiecesCount() {
+        return board.stream().mapToInt(Rank::countTotalPieces).sum();
     }
 
-    public int countSpecificType(Piece.Color color, Piece.Type type) {
+    public int countSpecificTypePieces(Piece.Color color, Piece.Type type) {
         return board.stream()
-                .mapToInt(r -> r.countSpecificPiece(color, type))
+                .mapToInt(r -> r.countSpecificPiecesCount(color, type))
                 .sum();
     }
 
@@ -102,18 +102,25 @@ public class Board {
     public double calculatePoint(Piece.Color color) {
         double point = 0;
 
-        for (int row = 0; row < SIDE_LENGTH; row++) {
-            int curRowPawnCount = 0;
-            for (int rankNum = 0; rankNum < SIDE_LENGTH; rankNum++) {
-                Piece curPiece = board.get(rankNum).get(row);
-                if(!curPiece.getColor().equals(color)) continue;
+        for (int row = 0; row < SIDE_LENGTH; row++)
+            point += calculateRowPoint(color, row);
 
-                point += curPiece.getType().getDefaultPoint();
-                if(curPiece.getType().equals(Piece.Type.PAWN)) curRowPawnCount++;
-            }
-            if(curRowPawnCount > 1) point -= (Piece.Type.PAWN.getDefaultPoint() / 2) * curRowPawnCount;
+        return point;
+    }
+
+    private double calculateRowPoint(Piece.Color color, int row) {
+        int point = 0;
+        int curRowPawnCount = 0;
+
+        for (int rankNum = 0; rankNum < SIDE_LENGTH; rankNum++) {
+            Piece curPiece = board.get(rankNum).get(row);
+            if(!curPiece.getColor().equals(color)) continue;
+
+            point += curPiece.getType().getDefaultPoint();
+            if(curPiece.getType().equals(Piece.Type.PAWN)) curRowPawnCount++;
         }
 
+        if(curRowPawnCount > 1) point -= (Piece.Type.PAWN.getDefaultPoint() / 2) * curRowPawnCount;
         return point;
     }
 
@@ -131,13 +138,13 @@ public class Board {
             return sb.toString();
         }
 
-        public int totalPieceCount() {
+        public int countTotalPieces() {
             return (int) this.stream()
                     .filter(p -> p.getType() != Piece.Type.NO_PIECE)
                     .count();
         }
 
-        public int countSpecificPiece(Piece.Color color, Piece.Type type) {
+        public int countSpecificPiecesCount(Piece.Color color, Piece.Type type) {
             return (int) this.stream()
                     .filter(p -> p.getColor().equals(color) && p.getType().equals(type))
                     .count();

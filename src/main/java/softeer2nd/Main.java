@@ -12,6 +12,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Board board = new Board();
         while (true) {
+            System.out.print("> ");
             String input = scanner.nextLine().trim();
             if(input.equals(START_COMMAND)) {
                 board.initialize();
@@ -20,6 +21,5 @@ public class Main {
             if(input.equals(FINISH_COMMAND)) break;
         }
         scanner.close();
-
     }
 }
