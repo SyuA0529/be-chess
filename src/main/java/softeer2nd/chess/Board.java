@@ -1,63 +1,69 @@
 package softeer2nd.chess;
 
-import softeer2nd.chess.pieces.Pawn;
+import softeer2nd.chess.pieces.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static softeer2nd.utils.StringUtils.*;
+
 public class Board {
     private static final int SIDE_LENGTH = 8;
-    private static final String BLANK_PIECE = ".";
 
-    private final List<Pawn> pawns = new ArrayList<>();
-    private final List<Pawn> whitePawns = new ArrayList<>();
-    private final List<Pawn> blackPawns = new ArrayList<>();
-
-    public String getWhitePawnsResult() {
-        StringBuilder sb = new StringBuilder();
-        for (Pawn whitePawn : whitePawns)
-            sb.append(whitePawn.getRepresentation());
-        return sb.toString();
-    }
-
-    public String getBlackPawnsResult() {
-        StringBuilder sb = new StringBuilder();
-        for (Pawn blackpawn : blackPawns)
-            sb.append(blackpawn.getRepresentation());
-        return sb.toString();
-    }
+    private final List<Piece> whitePieces = new ArrayList<>();
+    private final List<Piece> blackPieces = new ArrayList<>();
 
     public void initialize() {
-        for (int i = 0; i < SIDE_LENGTH; i++) {
-            whitePawns.add(new Pawn(Pawn.WHITE_COLOR));
-            blackPawns.add(new Pawn(Pawn.BLACK_COLOR));
-        }
+        initWhitePiece();
+        initBlackPieces();
     }
 
-    public String print() {
+    private void initWhitePiece() {
+        whitePieces.clear();
+        for (int i = 0; i < SIDE_LENGTH; i++) whitePieces.add(Piece.createWhitePawn());
+        whitePieces.add(Piece.createWhiteRook());
+        whitePieces.add(Piece.createWhiteKnight());
+        whitePieces.add(Piece.createWhiteBishop());
+        whitePieces.add(Piece.createWhiteQueen());
+        whitePieces.add(Piece.createWhiteKing());
+        whitePieces.add(Piece.createWhiteBishop());
+        whitePieces.add(Piece.createWhiteKnight());
+        whitePieces.add(Piece.createWhiteRook());
+    }
+
+    private void initBlackPieces() {
+        blackPieces.clear();
+        for (int i = 0; i < SIDE_LENGTH; i++) blackPieces.add(Piece.createBlackPawn());
+        blackPieces.add(Piece.createBlackRook());
+        blackPieces.add(Piece.createBlackKnight());
+        blackPieces.add(Piece.createBlackBishop());
+        blackPieces.add(Piece.createBlackQueen());
+        blackPieces.add(Piece.createBlackKing());
+        blackPieces.add(Piece.createBlackBishop());
+        blackPieces.add(Piece.createBlackKnight());
+        blackPieces.add(Piece.createBlackRook());
+    }
+
+    public String showBoard() {
+        String blankRank = "........";
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < SIDE_LENGTH; i++) {
-            sb.append(getPrintLine(i));
-            if(i != SIDE_LENGTH - 1) sb.append('\n');
-        }
+        sb.append(getPrintLine(blackPieces.subList(SIDE_LENGTH, blackPieces.size())));
+        sb.append(getPrintLine(blackPieces.subList(0, SIDE_LENGTH)));
+
+        sb.append(appendNewLine(blankRank).repeat(4));
+
+        sb.append(getPrintLine(whitePieces.subList(0, SIDE_LENGTH)));
+        sb.append(getPrintLine(whitePieces.subList(SIDE_LENGTH, whitePieces.size())));
         return sb.toString();
     }
 
-    private String getPrintLine(int lineNum) {
-        if(lineNum == 1 || lineNum == 6)
-            return lineNum == 1 ? getBlackPawnsResult() : getWhitePawnsResult();
-        return BLANK_PIECE.repeat(SIDE_LENGTH);
+    private static String getPrintLine(List<Piece> pieces) {
+        StringBuilder sb = new StringBuilder();
+        pieces.forEach(p -> sb.append(p.getRepresentation()));
+        return appendNewLine(sb.toString());
     }
 
-    public void add(Pawn pawn) {
-        pawns.add(pawn);
-    }
-
-    public int size() {
-        return pawns.size();
-    }
-
-    public Pawn get(int idx) {
-        return pawns.get(idx);
+    public int pieceCount() {
+        return whitePieces.size() + blackPieces.size();
     }
 }
