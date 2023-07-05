@@ -1,6 +1,8 @@
 package softeer2nd.chess.pieces;
 
-public class Piece {
+import java.util.Objects;
+
+public class Piece implements Comparable<Piece>{
     private final Color color;
     private final Type type;
 
@@ -90,18 +92,40 @@ public class Piece {
         return getColor().equals(Color.BLACK);
     }
 
+    @Override
+    public int compareTo(Piece other) {
+        return Double.compare(this.getType().getDefaultPoint(), other.getType().getDefaultPoint());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Piece piece = (Piece) o;
+        return color == piece.color && type == piece.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(color, type);
+    }
+
     public enum Color {
-        WHITE, BLACK, NOCOLOR;
+        WHITE, BLACK, NOCOLOR
     }
 
     public enum Type {
-        PAWN('p'), ROOK('r'), KNIGHT('n'),
-        BISHOP('b'), QUEEN('q'), KING('k'), NO_PIECE('.');
+        PAWN('p', 1), ROOK('r', 5.0),
+        KNIGHT('n', 2.5), BISHOP('b', 3),
+        QUEEN('q', 9), KING('k', 0),
+        NO_PIECE('.', 0);
 
         private final char representation;
+        private final double defaultPoint;
 
-        Type(char representation) {
+        Type(char representation, double defaultPoint) {
             this.representation = representation;
+            this.defaultPoint = defaultPoint;
         }
 
         public char getWhiteRepresentation() {
@@ -110,6 +134,10 @@ public class Piece {
 
         public char getBlackRepresentation() {
             return Character.toUpperCase(representation);
+        }
+
+        public double getDefaultPoint() {
+            return defaultPoint;
         }
     }
 }
