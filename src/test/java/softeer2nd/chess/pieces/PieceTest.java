@@ -3,41 +3,62 @@ package softeer2nd.chess.pieces;
 import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static softeer2nd.chess.pieces.Piece.*;
 
 public class PieceTest {
     @Test
-    public void create_piece() {
-        verifyPiece(Piece.createWhitePawn(), Piece.WHITE_COLOR, Piece.WHITE_PAWN_REPRESENTATION);
-        verifyPiece(Piece.createBlackPawn(), Piece.BLACK_COLOR, Piece.BLACK_PAWN_REPRESENTATION);
+    @DisplayName("eunm으로부터 Representation 가져오기")
+    void getRepresentationFromEnumTest() {
+        assertThat(Type.PAWN.getWhiteRepresentation()).isEqualTo('p');
+        assertThat(Type.ROOK.getWhiteRepresentation()).isEqualTo('r');
+        assertThat(Type.KNIGHT.getWhiteRepresentation()).isEqualTo('n');
+        assertThat(Type.BISHOP.getWhiteRepresentation()).isEqualTo('b');
+        assertThat(Type.QUEEN.getWhiteRepresentation()).isEqualTo('q');
+        assertThat(Type.KING.getWhiteRepresentation()).isEqualTo('k');
 
-        verifyPiece(Piece.createWhiteKnight(), Piece.WHITE_COLOR, Piece.WHITE_KNIGHT_REPRESENTATION);
-        verifyPiece(Piece.createBlackKnight(), Piece.BLACK_COLOR, Piece.BLACK_KNIGHT_REPRESENTATION);
+        assertThat(Type.PAWN.getBlackRepresentation()).isEqualTo('P');
+        assertThat(Type.ROOK.getBlackRepresentation()).isEqualTo('R');
+        assertThat(Type.KNIGHT.getBlackRepresentation()).isEqualTo('N');
+        assertThat(Type.BISHOP.getBlackRepresentation()).isEqualTo('B');
+        assertThat(Type.QUEEN.getBlackRepresentation()).isEqualTo('Q');
+        assertThat(Type.KING.getBlackRepresentation()).isEqualTo('K');
+    }
 
-        verifyPiece(Piece.createWhiteRook(), Piece.WHITE_COLOR, Piece.WHITE_ROOK_REPRESENTATION);
-        verifyPiece(Piece.createBlackRook(), Piece.BLACK_COLOR, Piece.BLACK_ROOK_REPRESENTATION);
+    @Test
+    @DisplayName("기물 생성")
+    void createPiece() {
+        verifyPiece(createWhitePawn(), createBlackPawn(), Type.PAWN);
+        verifyPiece(createWhiteKnight(), createBlackKnight(), Type.KNIGHT);
+        verifyPiece(createWhiteRook(), createBlackRook(), Type.ROOK);
+        verifyPiece(createWhiteBishop(), createBlackBishop(), Type.BISHOP);
+        verifyPiece(createWhiteQueen(), createBlackQueen(), Type.QUEEN);
+        verifyPiece(createWhiteKing(), createBlackKing(), Type.KING);
 
-        verifyPiece(Piece.createWhiteBishop(), Piece.WHITE_COLOR, Piece.WHITE_BISHOP_REPRESENTATION);
-        verifyPiece(Piece.createBlackBishop(), Piece.BLACK_COLOR, Piece.BLACK_BISHOP_REPRESENTATION);
+        Piece blank = createBlank();
+        assertThat(blank.isWhite()).isFalse();
+        assertThat(blank.isBlack()).isFalse();
+        assertThat(blank.getType()).isEqualTo(Type.NO_PIECE);
+    }
 
-        verifyPiece(Piece.createWhiteQueen(), Piece.WHITE_COLOR, Piece.WHITE_QUEEN_REPRESENTATION);
-        verifyPiece(Piece.createBlackQueen(), Piece.BLACK_COLOR, Piece.BLACK_QUEEN_REPRESENTATION);
+    private void verifyPiece(final Piece whitePiece, final Piece blackPiece, final Type type) {
+        assertThat(whitePiece.isWhite()).isTrue();
+        assertThat(whitePiece.getType()).isEqualTo(type);
 
-        verifyPiece(Piece.createWhiteKing(), Piece.WHITE_COLOR, Piece.WHITE_KING_REPRESENTATION);
-        verifyPiece(Piece.createBlackKing(), Piece.BLACK_COLOR, Piece.BLACK_KING_REPRESENTATION);
+        assertThat(blackPiece.isBlack()).isTrue();
+        assertThat(blackPiece.getType()).isEqualTo(type);
     }
 
     @Test
     @DisplayName("기물 색상 검증")
     void testVerifyPieceColor() {
         Piece[] whitePieces = {
-                Piece.createWhitePawn(), Piece.createWhiteKnight(), Piece.createWhiteRook(),
-                Piece.createWhiteBishop(), Piece.createWhiteQueen(), Piece.createWhiteKing()
+                createWhitePawn(), createWhiteKnight(), createWhiteRook(),
+                createWhiteBishop(), createWhiteQueen(), createWhiteKing()
         };
 
         Piece[] blackPieces = {
-                Piece.createBlackPawn(), Piece.createBlackKnight(), Piece.createBlackRook(),
-                Piece.createBlackBishop(), Piece.createBlackQueen(), Piece.createBlackKing()
+                createBlackPawn(), createBlackKnight(), createBlackRook(),
+                createBlackBishop(), createBlackQueen(), createBlackKing()
         };
 
         for (Piece whitePiece : whitePieces) {
@@ -52,8 +73,22 @@ public class PieceTest {
         }
     }
 
-    private void verifyPiece(final Piece piece, final String color, final char representation) {
-        assertEquals(color, piece.getColor());
-        assertEquals(representation, piece.getRepresentation());
+    @Test
+    @DisplayName("기물 이름 검증")
+    void testVerifyPieceRepresentation() {
+        assertThat(Piece.createWhiteKing().getRepresentation()).isEqualTo(Type.KING.getWhiteRepresentation());
+        assertThat(Piece.createWhiteQueen().getRepresentation()).isEqualTo(Type.QUEEN.getWhiteRepresentation());
+        assertThat(Piece.createWhiteBishop().getRepresentation()).isEqualTo(Type.BISHOP.getWhiteRepresentation());
+        assertThat(Piece.createWhiteKnight().getRepresentation()).isEqualTo(Type.KNIGHT.getWhiteRepresentation());
+        assertThat(Piece.createWhiteRook().getRepresentation()).isEqualTo(Type.ROOK.getWhiteRepresentation());
+        assertThat(Piece.createWhitePawn().getRepresentation()).isEqualTo(Type.PAWN.getWhiteRepresentation());
+
+
+        assertThat(Piece.createBlackKing().getRepresentation()).isEqualTo(Type.KING.getBlackRepresentation());
+        assertThat(Piece.createBlackQueen().getRepresentation()).isEqualTo(Type.QUEEN.getBlackRepresentation());
+        assertThat(Piece.createBlackBishop().getRepresentation()).isEqualTo(Type.BISHOP.getBlackRepresentation());
+        assertThat(Piece.createBlackKnight().getRepresentation()).isEqualTo(Type.KNIGHT.getBlackRepresentation());
+        assertThat(Piece.createBlackRook().getRepresentation()).isEqualTo(Type.ROOK.getBlackRepresentation());
+        assertThat(Piece.createBlackPawn().getRepresentation()).isEqualTo(Type.PAWN.getBlackRepresentation());
     }
 }
