@@ -15,7 +15,7 @@ public class Main {
             String input = scanner.nextLine().trim();
             if(input.equals(START_COMMAND)) {
                 board.initialize();
-                System.out.println(board.print());
+                System.out.println(board.showBoard());
             }
             if(input.equals(FINISH_COMMAND)) break;
         }
