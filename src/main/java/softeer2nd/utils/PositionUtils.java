@@ -2,10 +2,6 @@ package softeer2nd.utils;
 
 import softeer2nd.chess.board.Board;
 import softeer2nd.chess.exception.OutOfBoardException;
-import softeer2nd.chess.pieces.Position;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PositionUtils {
     private PositionUtils() {
