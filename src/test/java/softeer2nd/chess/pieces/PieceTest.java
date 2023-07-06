@@ -3,7 +3,7 @@ package softeer2nd.chess.pieces;
 import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static softeer2nd.chess.pieces.Piece.*;
+import static softeer2nd.chess.pieces.Piece.Type;
 
 public class PieceTest {
     @Test
@@ -27,14 +27,14 @@ public class PieceTest {
     @Test
     @DisplayName("기물 생성")
     void createPiece() {
-        verifyPiece(createWhitePawn(), createBlackPawn(), Type.PAWN);
-        verifyPiece(createWhiteKnight(), createBlackKnight(), Type.KNIGHT);
-        verifyPiece(createWhiteRook(), createBlackRook(), Type.ROOK);
-        verifyPiece(createWhiteBishop(), createBlackBishop(), Type.BISHOP);
-        verifyPiece(createWhiteQueen(), createBlackQueen(), Type.QUEEN);
-        verifyPiece(createWhiteKing(), createBlackKing(), Type.KING);
+        verifyPiece(Piece.createWhitePawn(new Position("a1")), Piece.createBlackPawn(new Position("a1")), Type.PAWN);
+        verifyPiece(Piece.createWhiteKnight(new Position("a1")), Piece.createBlackKnight(new Position("a1")), Type.KNIGHT);
+        verifyPiece(Piece.createWhiteRook(new Position("a1")), Piece.createBlackRook(new Position("a1")), Type.ROOK);
+        verifyPiece(Piece.createWhiteBishop(new Position("a1")), Piece.createBlackBishop(new Position("a1")), Type.BISHOP);
+        verifyPiece(Piece.createWhiteQueen(new Position("a1")), Piece.createBlackQueen(new Position("a1")), Type.QUEEN);
+        verifyPiece(Piece.createWhiteKing(new Position("a1")), Piece.createBlackKing(new Position("a1")), Type.KING);
 
-        Piece blank = createBlank();
+        Piece blank = Piece.createBlank(new Position("a1"));
         assertThat(blank.isWhite()).isFalse();
         assertThat(blank.isBlack()).isFalse();
         assertThat(blank.getType()).isEqualTo(Type.NO_PIECE);
@@ -52,13 +52,15 @@ public class PieceTest {
     @DisplayName("기물 색상 검증")
     void testVerifyPieceColor() {
         Piece[] whitePieces = {
-                createWhitePawn(), createWhiteKnight(), createWhiteRook(),
-                createWhiteBishop(), createWhiteQueen(), createWhiteKing()
+                Piece.createWhitePawn(new Position("a1")), Piece.createWhiteKnight(new Position("a1")),
+                Piece.createWhiteRook(new Position("a1")), Piece.createWhiteBishop(new Position("a1")),
+                Piece.createWhiteQueen(new Position("a1")), Piece.createWhiteKing(new Position("a1"))
         };
 
         Piece[] blackPieces = {
-                createBlackPawn(), createBlackKnight(), createBlackRook(),
-                createBlackBishop(), createBlackQueen(), createBlackKing()
+                Piece.createBlackPawn(new Position("a1")), Piece.createBlackKnight(new Position("a1")),
+                Piece.createBlackRook(new Position("a1")), Piece.createBlackBishop(new Position("a1")),
+                Piece.createBlackQueen(new Position("a1")), Piece.createBlackKing(new Position("a1"))
         };
 
         for (Piece whitePiece : whitePieces) {
@@ -76,19 +78,19 @@ public class PieceTest {
     @Test
     @DisplayName("기물 이름 검증")
     void testVerifyPieceRepresentation() {
-        assertThat(Piece.createWhiteKing().getRepresentation()).isEqualTo(Type.KING.getWhiteRepresentation());
-        assertThat(Piece.createWhiteQueen().getRepresentation()).isEqualTo(Type.QUEEN.getWhiteRepresentation());
-        assertThat(Piece.createWhiteBishop().getRepresentation()).isEqualTo(Type.BISHOP.getWhiteRepresentation());
-        assertThat(Piece.createWhiteKnight().getRepresentation()).isEqualTo(Type.KNIGHT.getWhiteRepresentation());
-        assertThat(Piece.createWhiteRook().getRepresentation()).isEqualTo(Type.ROOK.getWhiteRepresentation());
-        assertThat(Piece.createWhitePawn().getRepresentation()).isEqualTo(Type.PAWN.getWhiteRepresentation());
+        assertThat(Piece.createWhiteKing(new Position("a1")).getRepresentation()).isEqualTo(Type.KING.getWhiteRepresentation());
+        assertThat(Piece.createWhiteQueen(new Position("a1")).getRepresentation()).isEqualTo(Type.QUEEN.getWhiteRepresentation());
+        assertThat(Piece.createWhiteBishop(new Position("a1")).getRepresentation()).isEqualTo(Type.BISHOP.getWhiteRepresentation());
+        assertThat(Piece.createWhiteKnight(new Position("a1")).getRepresentation()).isEqualTo(Type.KNIGHT.getWhiteRepresentation());
+        assertThat(Piece.createWhiteRook(new Position("a1")).getRepresentation()).isEqualTo(Type.ROOK.getWhiteRepresentation());
+        assertThat(Piece.createWhitePawn(new Position("a1")).getRepresentation()).isEqualTo(Type.PAWN.getWhiteRepresentation());
 
 
-        assertThat(Piece.createBlackKing().getRepresentation()).isEqualTo(Type.KING.getBlackRepresentation());
-        assertThat(Piece.createBlackQueen().getRepresentation()).isEqualTo(Type.QUEEN.getBlackRepresentation());
-        assertThat(Piece.createBlackBishop().getRepresentation()).isEqualTo(Type.BISHOP.getBlackRepresentation());
-        assertThat(Piece.createBlackKnight().getRepresentation()).isEqualTo(Type.KNIGHT.getBlackRepresentation());
-        assertThat(Piece.createBlackRook().getRepresentation()).isEqualTo(Type.ROOK.getBlackRepresentation());
-        assertThat(Piece.createBlackPawn().getRepresentation()).isEqualTo(Type.PAWN.getBlackRepresentation());
+        assertThat(Piece.createBlackKing(new Position("a1")).getRepresentation()).isEqualTo(Type.KING.getBlackRepresentation());
+        assertThat(Piece.createBlackQueen(new Position("a1")).getRepresentation()).isEqualTo(Type.QUEEN.getBlackRepresentation());
+        assertThat(Piece.createBlackBishop(new Position("a1")).getRepresentation()).isEqualTo(Type.BISHOP.getBlackRepresentation());
+        assertThat(Piece.createBlackKnight(new Position("a1")).getRepresentation()).isEqualTo(Type.KNIGHT.getBlackRepresentation());
+        assertThat(Piece.createBlackRook(new Position("a1")).getRepresentation()).isEqualTo(Type.ROOK.getBlackRepresentation());
+        assertThat(Piece.createBlackPawn(new Position("a1")).getRepresentation()).isEqualTo(Type.PAWN.getBlackRepresentation());
     }
 }
