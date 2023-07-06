@@ -28,11 +28,27 @@ class ChessGameTest {
     void movePiece() {
         board.initialize();
 
-        String sourcePosition = "b2";
-        String targetPosition = "b3";
+        Position sourcePosition = new Position("b2");
+        Position targetPosition = new Position("b3");
         chessGame.movePiece(sourcePosition, targetPosition);
-        assertEquals(Piece.createBlank(new Position(sourcePosition)), board.findPiece(sourcePosition));
-        assertEquals(Piece.createWhitePawn(new Position(targetPosition)), board.findPiece(targetPosition));
+        assertEquals(Piece.createBlank(sourcePosition), board.findPiece(sourcePosition));
+        assertEquals(Piece.createWhitePawn(targetPosition), board.findPiece(targetPosition));
+    }
+
+    @Test
+    @DisplayName("같은 팀 기물이 위치한 곳에는 이동 불가")
+    void cannotMoveTeamPiecePos() {
+        //given
+        board.initializeEmpty();
+        Position pos1 = new Position("b2");
+        Position pos2 = new Position("b3");
+        board.putPiece(pos1, Piece.createWhiteKing(pos1));
+        board.putPiece(pos2, Piece.createWhiteKing(pos2));
+
+        //when
+        //then
+        assertThatThrownBy(() -> chessGame.movePiece(pos1, pos2))
+                .isInstanceOf(CannotMovePosException.class);
     }
 
     @Test
@@ -62,7 +78,7 @@ class ChessGameTest {
 
         //when
         //then
-        assertThatThrownBy(() -> chessGame.movePiece("a1", "a2"))
+        assertThatThrownBy(() -> chessGame.movePiece(new Position("a1"), new Position("a2")))
                 .isInstanceOf(CannotMovePieceException.class);
     }
 
@@ -71,26 +87,50 @@ class ChessGameTest {
     void moveKing() {
         //given
         board.initializeEmpty();
-        String kingPos = "a1";
-        Piece king = Piece.createWhiteKing(new Position(kingPos));
-        board.putPiece(kingPos, king);
-        board.putPiece("b2", Piece.createBlackPawn(new Position("b2")));
-        board.putPiece("c3", Piece.createWhitePawn(new Position("c3")));
+        Position kingPos = new Position("a1");
+        board.putPiece(kingPos, Piece.createWhiteKing(kingPos));
+        addPiece("b2", Piece.createBlackPawn(new Position("b2")));
+        addPiece("c3", Piece.createWhitePawn(new Position("c3")));
 
         //when
-        chessGame.movePiece("a1", "b2");
+        chessGame.movePiece(new Position("a1"), new Position("b2"));
 
         //then
-        assertThat(board.findPiece("b2")).isEqualTo(king);
-        assertThatThrownBy(() -> chessGame.movePiece("b2", "c4"))
+        assertThat(board.findPiece(new Position("b2"))).isEqualTo(Piece.createWhiteKing(kingPos));
+        assertThatThrownBy(() -> chessGame.movePiece(new Position("b2"), new Position("c4")))
                 .isInstanceOf(CannotMovePosException.class);
-        assertThatThrownBy(() -> chessGame.movePiece("b2", "c3"))
+        assertThatThrownBy(() -> chessGame.movePiece(new Position("b2"), new Position("c3")))
                 .isInstanceOf(CannotMovePosException.class);
-        assertThatThrownBy(() -> chessGame.movePiece("b2", "a0"))
+        assertThatThrownBy(() -> chessGame.movePiece(new Position("b2"), new Position("a0")))
                 .isInstanceOf(OutOfBoardException.class);
+    }
+
+    @Test
+    @DisplayName("퀸은 직선 방향이면 어디든 움직일 수 있다")
+    void queenMove() {
+        //given
+        board.initializeEmpty();
+        Piece whiteQueen = Piece.createWhiteQueen(new Position("a1"));
+        addPiece("a1", whiteQueen);
+        addPiece("a8", Piece.createBlackPawn(new Position("a8")));
+        addPiece("h8", Piece.createWhitePawn(new Position("h8")));
+        addPiece("h3", Piece.createWhitePawn(new Position("h3")));
+
+        //when
+        //then
+        chessGame.movePiece(new Position("a1"), new Position("a8"));
+        assertThat(board.findPiece(new Position("a8"))).isEqualTo(whiteQueen);
+        chessGame.movePiece(new Position("a8"), new Position("h1"));
+        assertThat(board.findPiece(new Position("h1"))).isEqualTo(whiteQueen);
+        assertThatThrownBy(() -> chessGame.movePiece(new Position("h1"), new Position("h5")))
+                .isInstanceOf(CannotMovePosException.class);
+        assertThatThrownBy(() -> chessGame.movePiece(new Position("h1"), new Position("h8")))
+                .isInstanceOf(CannotMovePosException.class);
+        assertThatThrownBy(() -> chessGame.movePiece(new Position("h1"), new Position("a7")))
+                .isInstanceOf(CannotMovePosException.class);
     }
     
     private void addPiece(String position, Piece piece) {
-        board.putPiece(position, piece);
+        board.putPiece(new Position(position), piece);
     }
 }

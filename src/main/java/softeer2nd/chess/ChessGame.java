@@ -2,8 +2,11 @@ package softeer2nd.chess;
 
 import softeer2nd.chess.board.Board;
 import softeer2nd.chess.exception.CannotMovePieceException;
+import softeer2nd.chess.exception.CannotMovePosException;
 import softeer2nd.chess.pieces.Piece;
 import softeer2nd.chess.pieces.Position;
+
+import java.util.stream.IntStream;
 
 public class ChessGame {
     private final Board board;
@@ -12,21 +15,26 @@ public class ChessGame {
         this.board = board;
     }
 
-    public void movePiece(String sourcePos, String targetPos) {
+    public void movePiece(Position sourcePos, Position targetPos) {
         Piece curPiece = board.findPiece(sourcePos);
-        if(curPiece.isBlank()) throw new CannotMovePieceException();
 
-        curPiece.move(targetPos);
+        if(sourcePos.equals(targetPos)) throw new CannotMovePosException();
+        if(curPiece.isBlank()) throw new CannotMovePieceException();
+        verifyTargetPosColor(targetPos, curPiece);
+        curPiece.getMovePath(targetPos).forEach(pos -> {
+            if(!pos.equals(targetPos) && board.findPiece(pos).getType() != Piece.Type.NO_PIECE)
+                throw new CannotMovePosException();
+        });
+
+        curPiece.changePosition(targetPos);
         board.putPiece(targetPos, curPiece);
-        board.putPiece(sourcePos, Piece.createBlank(new Position(sourcePos)));
+        board.putPiece(sourcePos, Piece.createBlank(sourcePos));
     }
 
     public double calculatePoint(Piece.Color color) {
-        double point = 0;
-        for (int rowNum = 0; rowNum < Board.SIDE_LENGTH; rowNum++) {
-            point += calculateRowPoint(rowNum, color);
-        }
-        return point;
+        return IntStream.range(0, Board.SIDE_LENGTH)
+                .mapToDouble(row -> calculateRowPoint(row, color))
+                .sum();
     }
 
     private double calculateRowPoint(int rowNum, Piece.Color color) {
@@ -38,5 +46,10 @@ public class ChessGame {
             point += piece.getType().getDefaultPoint();
         }
         return pawnCount > 1 ? point - (Piece.Type.PAWN.getDefaultPoint() / 2) * pawnCount : point;
+    }
+
+    private void verifyTargetPosColor(Position targetPos, Piece curPiece) {
+        if(board.findPiece(targetPos).getColor().equals(curPiece.getColor()))
+            throw new CannotMovePosException();
     }
 }

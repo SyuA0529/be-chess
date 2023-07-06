@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import softeer2nd.chess.board.Board;
-import softeer2nd.chess.exception.CannotMovePosException;
 import softeer2nd.chess.pieces.Piece;
 import softeer2nd.chess.pieces.Piece.Color;
 import softeer2nd.chess.pieces.Piece.Type;
@@ -44,10 +43,11 @@ public class BoardTest {
     void findPiece() {
         board.initialize();
 
-        assertThat(board.findPiece("a8")).isEqualTo(Piece.createBlackRook(new Position("a8")));
-        assertThat(board.findPiece("h8")).isEqualTo(Piece.createBlackRook(new Position("h8")));
-        assertThat(board.findPiece("a1")).isEqualTo(Piece.createWhiteRook(new Position("a1")));
-        assertThat(board.findPiece("h1")).isEqualTo(Piece.createWhiteRook(new Position("h1")));
+        assertThat(board.findPiece(new Position("a8")))
+                .isEqualTo(Piece.createBlackRook(new Position("a8")));
+        assertThat(board.findPiece(new Position("h8"))).isEqualTo(Piece.createBlackRook(new Position("h8")));
+        assertThat(board.findPiece(new Position("a1"))).isEqualTo(Piece.createWhiteRook(new Position("a1")));
+        assertThat(board.findPiece(new Position("h1"))).isEqualTo(Piece.createWhiteRook(new Position("h1")));
     }
 
     @Test
@@ -55,8 +55,8 @@ public class BoardTest {
     void putPiece() {
         board.initializeEmpty();
 
-        String position = "b5";
-        Piece piece = Piece.createBlackRook(new Position("b5"));
+        Position position = new Position("b5");
+        Piece piece = Piece.createBlackRook(position);
         board.putPiece(position, piece);
         assertThat(board.findPiece(position)).isEqualTo(piece);
     }
@@ -105,19 +105,5 @@ public class BoardTest {
         for (int i = 0; i < 8; i++)
             assertThat(blackPieces.get(7 + i).getType()).isEqualTo(Type.PAWN);
         assertThat(blackPieces.get(blackPieces.size() - 1).getType()).isEqualTo(Type.KING);
-    }
-
-    @Test
-    @DisplayName("같은 팀 기물이 있으면 해당 위치에는 같은 팀 기물이 위치하지 못한다")
-    void verifyErrorWhenPutPiece() {
-        //given
-        board.initializeEmpty();
-        String pos = "a1";
-        board.putPiece(pos, Piece.createWhiteKing(new Position(pos)));
-
-        //when
-        //then
-        assertThatThrownBy(() -> board.putPiece(pos, Piece.createWhitePawn(new Position(pos))))
-                .isInstanceOf(CannotMovePosException.class);
     }
 }

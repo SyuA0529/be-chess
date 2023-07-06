@@ -12,14 +12,14 @@ public class Position {
         this(getRankNumFromPos(pos), getRowNumFromPos(pos));
     }
 
-    private Position(int rankNum, int rowNum) {
+    public Position(int rankNum, int rowNum) {
         this.rankNum = rankNum;
         this.rowNum = rowNum;
     }
 
-    public void changePos(String targetPos) {
-        this.rankNum = getRankNumFromPos(targetPos);
-        this.rowNum = getRowNumFromPos(targetPos);
+    public void changePos(Position targetPos) {
+        this.rankNum = targetPos.getRankNum();
+        this.rowNum = targetPos.getRowNum();
     }
 
     public int getRankNum() {
@@ -28,6 +28,14 @@ public class Position {
 
     public int getRowNum() {
         return rowNum;
+    }
+
+    public int getRankDiff(Position position) {
+        return this.getRankNum() - position.getRankNum();
+    }
+
+    public int getRowDiff(Position position) {
+        return this.getRowNum() - position.getRowNum();
     }
 
     @Override
@@ -42,4 +50,5 @@ public class Position {
     public int hashCode() {
         return Objects.hash(rankNum, rowNum);
     }
+
 }

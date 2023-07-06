@@ -1,5 +1,7 @@
 package softeer2nd.chess.board;
 
+import softeer2nd.chess.pieces.Piece.Color;
+import softeer2nd.chess.pieces.Piece.Type;
 import softeer2nd.chess.pieces.Piece;
 
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ public class Rank extends ArrayList<Piece> {
                 .count();
     }
 
-    public int countSpecificPieces(Piece.Color color, Piece.Type type) {
+    public int countSpecificPieces(Color color, Type type) {
         return (int) this.stream()
                 .filter(p -> p.getColor().equals(color) && p.getType().equals(type))
                 .count();

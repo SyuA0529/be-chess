@@ -1,9 +1,10 @@
 package softeer2nd.chess.pieces;
 
+import softeer2nd.chess.board.Board;
 import softeer2nd.chess.exception.CannotMovePosException;
-import java.util.Objects;
 
-import static softeer2nd.utils.PositionUtils.*;
+import java.util.*;
+
 
 public class Piece implements Comparable<Piece>{
     private final Color color;
@@ -102,22 +103,45 @@ public class Piece implements Comparable<Piece>{
         return type.equals(Type.NO_PIECE);
     }
 
-    public void move(String targetPos) {
-        if(type.equals(Type.KING)) verifyKingMove(targetPos);
+    public List<Position> getMovePath(Position targetPos) {
+        if(getType().equals(Type.KING)) return getKingMovePath(targetPos);
+        if(getType().equals(Type.QUEEN)) return getQueenMovePath(targetPos);
+        return new ArrayList<>();
+    }
+
+    private List<Position> getKingMovePath(Position targetPos) {
+        Direction direction = Direction.diagonalDirection().stream()
+                .filter(d -> d.getYDegree() == targetPos.getRankDiff(position) &&
+                        d.getXDegree() == targetPos.getRowDiff(position))
+                .findFirst()
+                .orElseThrow(CannotMovePosException::new);
+        return List.of(new Position(position.getRankNum() + direction.getYDegree(),
+                position.getRowNum() + direction.getXDegree()));
+    }
+
+    private List<Position> getQueenMovePath(Position targetPos) {
+        int dx = targetPos.getRowDiff(position);
+        int dy = targetPos.getRankDiff(position);
+        Direction direction = Direction.everyDirection().stream()
+                .filter(d ->
+                        (Math.abs(dx) == Math.abs(dy) && d.getXDegree() == dx / Math.abs(dx) && d.getYDegree() == dy / Math.abs(dy)) ||
+                        ((dx == 0 && d.getXDegree() == dx && d.getYDegree() == dy / Math.abs(dy)) ||
+                                (dy == 0 && d.getXDegree() == dx / Math.abs(dx) && d.getYDegree() == dy)))
+                .findFirst()
+                .orElseThrow(CannotMovePosException::new);
+
+        List<Position> positions = new ArrayList<>();
+        for (int i = 1; i < Board.SIDE_LENGTH; i++) {
+            Position curPos = new Position(position.getRankNum() + direction.getYDegree() * i,
+                    position.getRowNum() + direction.getXDegree() * i);
+            if(curPos.equals(targetPos)) break;
+            positions.add(curPos);
+        }
+        return positions;
+    }
+
+    public void changePosition(Position targetPos) {
         position.changePos(targetPos);
-    }
-
-    public void verifyKingMove(String targetPos) {
-        if(getRankNumDiff(targetPos) > 1 || getRowNumDiff(targetPos) > 1)
-            throw new CannotMovePosException();
-    }
-
-    private int getRowNumDiff(String targetPos) {
-        return Math.abs(position.getRowNum() - getRowNumFromPos(targetPos));
-    }
-
-    private int getRankNumDiff(String targetPos) {
-        return Math.abs(position.getRankNum() - getRankNumFromPos(targetPos));
     }
 
     @Override

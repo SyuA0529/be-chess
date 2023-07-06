@@ -1,6 +1,5 @@
 package softeer2nd.chess.board;
 
-import softeer2nd.chess.exception.CannotMovePosException;
 import softeer2nd.chess.pieces.Piece;
 import softeer2nd.chess.pieces.Piece.Type;
 import softeer2nd.chess.pieces.Piece.Color;
@@ -8,7 +7,6 @@ import softeer2nd.chess.pieces.Position;
 
 import java.util.*;
 
-import static softeer2nd.utils.PositionUtils.*;
 
 public class Board {
     public static final int SIDE_LENGTH = 8;
@@ -65,9 +63,8 @@ public class Board {
         board.add(rank);
     }
 
-    private void initPawnRank(Piece.Color color) {
+    private void initPawnRank(Color color) {
         Rank rank = new Rank();
-
         for (int i = 0; i < SIDE_LENGTH; i++)
             rank.add(color.equals(Piece.Color.WHITE) ?
                     Piece.createWhitePawn(new Position(Character.toString('a' + i) + "2")) :
@@ -82,20 +79,13 @@ public class Board {
         board.add(rank);
     }
 
-    public Piece findPiece(String position) {
-        return board.get(getRankNumFromPos(position))
-                .get(getRowNumFromPos(position));
+    public Piece findPiece(Position position) {
+        return board.get(position.getRankNum())
+                .get(position.getRowNum());
     }
 
-    public void putPiece(String position, Piece piece) {
-        Rank rank = board.get(getRankNumFromPos(position));
-        verifyMovePiece(position, piece, rank);
-        rank.set(getRowNumFromPos(position), piece);
-    }
-
-    private static void verifyMovePiece(String position, Piece piece, Rank rank) {
-        if(rank.get(getRowNumFromPos(position)).getColor().equals(piece.getColor()))
-            throw new CannotMovePosException();
+    public void putPiece(Position position, Piece piece) {
+        board.get(position.getRankNum()).set(position.getRowNum(), piece);
     }
 
     public List<Piece> getRow(int rowNum) {

@@ -3,6 +3,7 @@ package softeer2nd;
 import softeer2nd.chess.ChessView;
 import softeer2nd.chess.board.Board;
 import softeer2nd.chess.ChessGame;
+import softeer2nd.chess.pieces.Position;
 
 import java.util.Scanner;
 
@@ -25,7 +26,7 @@ public class Main {
 
             if(input.startsWith(MOVE_COMMAND)) {
                 String[] strings = input.split(" ");
-                chessGame.movePiece(strings[1], strings[2]);
+                chessGame.movePiece(new Position(strings[1]), new Position(strings[2]));
             }
 
             if(input.equals(FINISH_COMMAND)) break;
