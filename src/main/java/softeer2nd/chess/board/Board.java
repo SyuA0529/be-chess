@@ -1,4 +1,4 @@
-package softeer2nd.chess;
+package softeer2nd.chess.board;
 
 import softeer2nd.chess.pieces.Piece;
 
@@ -79,7 +79,7 @@ public class Board {
         return sb.toString();
     }
 
-    public int totalPiecesCount() {
+    public int countTotalPieces() {
         return board.stream().mapToInt(Rank::countTotalPieces).sum();
     }
 
@@ -101,10 +101,8 @@ public class Board {
 
     public double calculatePoint(Piece.Color color) {
         double point = 0;
-
         for (int row = 0; row < SIDE_LENGTH; row++)
             point += calculateRowPoint(color, row);
-
         return point;
     }
 
@@ -120,8 +118,7 @@ public class Board {
             if(curPiece.getType().equals(Piece.Type.PAWN)) curRowPawnCount++;
         }
 
-        if(curRowPawnCount > 1) point -= (Piece.Type.PAWN.getDefaultPoint() / 2) * curRowPawnCount;
-        return point;
+        return curRowPawnCount > 1 ? point - (Piece.Type.PAWN.getDefaultPoint() / 2) * curRowPawnCount : point;
     }
 
     public List<Piece> getSortedColorPiecesByPoint(Piece.Color color) {

@@ -11,12 +11,12 @@ class StringUtilsTest {
     @DisplayName("개행문자 추가")
     void addNewLineToString() {
         //given
-        String str = "asdf";
+        String str = "string";
 
         //when
         String resultStr = StringUtils.appendNewLine(str);
 
         //then
-        assertThat(resultStr).isEqualTo(str + "\n");
+        assertThat(resultStr).isEqualTo(str + StringUtils.NEWLINE);
     }
 }

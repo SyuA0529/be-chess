@@ -1,9 +1,11 @@
-package softeer2nd.chess;
+package softeer2nd.chess.board;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import softeer2nd.chess.pieces.Piece;
+import softeer2nd.chess.pieces.Piece.Color;
+import softeer2nd.chess.pieces.Piece.Type;
 
 import java.util.*;
 
@@ -22,7 +24,7 @@ public class BoardTest {
     @Test
     public void create() {
         board.initialize();
-        assertEquals(32, board.totalPiecesCount());
+        assertEquals(32, board.countTotalPieces());
         String blankRank = appendNewLine("........");
         assertEquals(
                 appendNewLine("RNBQKBNR") +
@@ -37,15 +39,15 @@ public class BoardTest {
     @DisplayName("기물의 색에 해당하는 기물의 개수 반환")
     void countSpecificPiece() {
         board.initialize();
-        Piece.Color[] colors = {Piece.Color.BLACK, Piece.Color.WHITE};
-        Piece.Type[] hasOnePieceTypes = {Piece.Type.KING, Piece.Type.QUEEN};
-        Piece.Type[] hasTwoPieceTypes = {Piece.Type.ROOK, Piece.Type.KNIGHT, Piece.Type.BISHOP};
+        Color[] colors = {Color.BLACK, Color.WHITE};
+        Type[] hasOnePieceTypes = {Type.KING, Type.QUEEN};
+        Type[] hasTwoPieceTypes = {Type.ROOK, Type.KNIGHT, Type.BISHOP};
 
-        for (Piece.Color color : colors) {
-            for (Piece.Type hasOnePieceType : hasOnePieceTypes)
+        for (Color color : colors) {
+            for (Type hasOnePieceType : hasOnePieceTypes)
                 assertThat(board.countSpecificTypePieces(color, hasOnePieceType)).isEqualTo(1);
 
-            for (Piece.Type hasTwoPieceType : hasTwoPieceTypes)
+            for (Type hasTwoPieceType : hasTwoPieceTypes)
                 assertThat(board.countSpecificTypePieces(color, hasTwoPieceType)).isEqualTo(2);
         }
     }
@@ -88,8 +90,8 @@ public class BoardTest {
         addPiece("e1", Piece.createWhiteRook());
         addPiece("f1", Piece.createWhiteKing());
 
-        assertEquals(15.0, board.calculatePoint(Piece.Color.BLACK), 0.01);
-        assertEquals(7.0, board.calculatePoint(Piece.Color.WHITE), 0.01);
+        assertEquals(15.0, board.calculatePoint(Color.BLACK), 0.01);
+        assertEquals(7.0, board.calculatePoint(Color.WHITE), 0.01);
 
         System.out.println(board.showBoard());
     }
@@ -101,7 +103,7 @@ public class BoardTest {
         board.initialize();
 
         //when
-        List<Piece> whitePieces = board.getSortedColorPiecesByPoint(Piece.Color.WHITE);
+        List<Piece> whitePieces = board.getSortedColorPiecesByPoint(Color.WHITE);
 
         //then
         assertThat(whitePieces.get(0)).isEqualTo(Piece.createWhiteQueen());
@@ -123,7 +125,7 @@ public class BoardTest {
         board.initialize();
 
         //when
-        List<Piece> whitePieces = board.getSortedColorPiecesByPoint(Piece.Color.BLACK);
+        List<Piece> whitePieces = board.getSortedColorPiecesByPoint(Color.BLACK);
 
         //then
         assertThat(whitePieces.get(0)).isEqualTo(Piece.createBlackQueen());
