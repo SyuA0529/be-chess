@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import softeer2nd.chess.board.Board;
+import softeer2nd.chess.exception.CannotMovePosException;
 import softeer2nd.chess.pieces.Piece;
 import softeer2nd.chess.pieces.Piece.Color;
 import softeer2nd.chess.pieces.Piece.Type;
@@ -12,8 +13,6 @@ import softeer2nd.chess.pieces.Position;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static softeer2nd.utils.StringUtils.appendNewLine;
 
 public class BoardTest {
     private Board board;
@@ -108,4 +107,17 @@ public class BoardTest {
         assertThat(blackPieces.get(blackPieces.size() - 1).getType()).isEqualTo(Type.KING);
     }
 
+    @Test
+    @DisplayName("같은 팀 기물이 있으면 해당 위치에는 같은 팀 기물이 위치하지 못한다")
+    void verifyErrorWhenPutPiece() {
+        //given
+        board.initializeEmpty();
+        String pos = "a1";
+        board.putPiece(pos, Piece.createWhiteKing(new Position(pos)));
+
+        //when
+        //then
+        assertThatThrownBy(() -> board.putPiece(pos, Piece.createWhitePawn(new Position(pos))))
+                .isInstanceOf(CannotMovePosException.class);
+    }
 }

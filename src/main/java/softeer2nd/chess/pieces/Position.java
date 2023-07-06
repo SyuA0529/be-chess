@@ -1,7 +1,5 @@
 package softeer2nd.chess.pieces;
 
-import softeer2nd.utils.PositionUtils;
-
 import java.util.Objects;
 
 import static softeer2nd.utils.PositionUtils.*;
@@ -11,7 +9,7 @@ public class Position {
     private int rowNum;
 
     public Position(String pos) {
-        this(getRankNumFromPosition(pos), getRowNumFromPosition(pos));
+        this(getRankNumFromPos(pos), getRowNumFromPos(pos));
     }
 
     private Position(int rankNum, int rowNum) {
@@ -20,8 +18,16 @@ public class Position {
     }
 
     public void changePos(String targetPos) {
-        this.rankNum = getRankNumFromPosition(targetPos);
-        this.rowNum = getRowNumFromPosition(targetPos);
+        this.rankNum = getRankNumFromPos(targetPos);
+        this.rowNum = getRowNumFromPos(targetPos);
+    }
+
+    public int getRankNum() {
+        return rankNum;
+    }
+
+    public int getRowNum() {
+        return rowNum;
     }
 
     @Override

@@ -1,6 +1,9 @@
 package softeer2nd.chess.pieces;
 
+import softeer2nd.chess.exception.CannotMovePosException;
 import java.util.Objects;
+
+import static softeer2nd.utils.PositionUtils.*;
 
 public class Piece implements Comparable<Piece>{
     private final Color color;
@@ -95,8 +98,26 @@ public class Piece implements Comparable<Piece>{
         return getColor().equals(Color.BLACK);
     }
 
+    public boolean isBlank() {
+        return type.equals(Type.NO_PIECE);
+    }
+
     public void move(String targetPos) {
+        if(type.equals(Type.KING)) verifyKingMove(targetPos);
         position.changePos(targetPos);
+    }
+
+    public void verifyKingMove(String targetPos) {
+        if(getRankNumDiff(targetPos) > 1 || getRowNumDiff(targetPos) > 1)
+            throw new CannotMovePosException();
+    }
+
+    private int getRowNumDiff(String targetPos) {
+        return Math.abs(position.getRowNum() - getRowNumFromPos(targetPos));
+    }
+
+    private int getRankNumDiff(String targetPos) {
+        return Math.abs(position.getRankNum() - getRankNumFromPos(targetPos));
     }
 
     @Override

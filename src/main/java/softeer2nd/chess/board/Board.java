@@ -1,5 +1,6 @@
 package softeer2nd.chess.board;
 
+import softeer2nd.chess.exception.CannotMovePosException;
 import softeer2nd.chess.pieces.Piece;
 import softeer2nd.chess.pieces.Piece.Type;
 import softeer2nd.chess.pieces.Piece.Color;
@@ -82,13 +83,19 @@ public class Board {
     }
 
     public Piece findPiece(String position) {
-        return board.get(getRankNumFromPosition(position))
-                .get(getRowNumFromPosition(position));
+        return board.get(getRankNumFromPos(position))
+                .get(getRowNumFromPos(position));
     }
 
     public void putPiece(String position, Piece piece) {
-        board.get(getRankNumFromPosition(position))
-                .set(getRowNumFromPosition(position), piece);
+        Rank rank = board.get(getRankNumFromPos(position));
+        verifyMovePiece(position, piece, rank);
+        rank.set(getRowNumFromPos(position), piece);
+    }
+
+    private static void verifyMovePiece(String position, Piece piece, Rank rank) {
+        if(rank.get(getRowNumFromPos(position)).getColor().equals(piece.getColor()))
+            throw new CannotMovePosException();
     }
 
     public List<Piece> getRow(int rowNum) {

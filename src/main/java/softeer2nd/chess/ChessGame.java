@@ -1,6 +1,7 @@
 package softeer2nd.chess;
 
 import softeer2nd.chess.board.Board;
+import softeer2nd.chess.exception.CannotMovePieceException;
 import softeer2nd.chess.pieces.Piece;
 import softeer2nd.chess.pieces.Position;
 
@@ -13,6 +14,8 @@ public class ChessGame {
 
     public void movePiece(String sourcePos, String targetPos) {
         Piece curPiece = board.findPiece(sourcePos);
+        if(curPiece.isBlank()) throw new CannotMovePieceException();
+
         curPiece.move(targetPos);
         board.putPiece(targetPos, curPiece);
         board.putPiece(sourcePos, Piece.createBlank(new Position(sourcePos)));
@@ -31,8 +34,8 @@ public class ChessGame {
         int pawnCount = 0;
         for (Piece piece : board.getRow(rowNum)) {
             if(!piece.getColor().equals(color)) continue;
-            point += piece.getType().getDefaultPoint();
             if(piece.getType().equals(Piece.Type.PAWN)) pawnCount++;
+            point += piece.getType().getDefaultPoint();
         }
         return pawnCount > 1 ? point - (Piece.Type.PAWN.getDefaultPoint() / 2) * pawnCount : point;
     }

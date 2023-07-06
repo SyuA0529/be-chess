@@ -1,14 +1,25 @@
 package softeer2nd.utils;
 
+import softeer2nd.chess.board.Board;
+import softeer2nd.chess.exception.OutOfBoardException;
+
 public class PositionUtils {
     private PositionUtils() {
     }
 
-    public static int getRowNumFromPosition(String position) {
-        return Character.toLowerCase(position.charAt(0)) - 'a';
+    public static int getRowNumFromPos(String position) {
+        int num = Character.toLowerCase(position.charAt(0)) - 'a';
+        verifyPos(num);
+        return num;
     }
 
-    public static int getRankNumFromPosition(String position) {
-        return Character.getNumericValue(position.charAt(1)) - 1;
+    public static int getRankNumFromPos(String position) {
+        int num = Character.getNumericValue(position.charAt(1)) - 1;
+        verifyPos(num);
+        return num;
+    }
+
+    private static void verifyPos(int num) {
+        if(num < 0 || num >= Board.SIDE_LENGTH) throw new OutOfBoardException();
     }
 }
