@@ -1,40 +1,30 @@
 package softeer2nd.chess;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import softeer2nd.chess.pieces.Pawn;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static softeer2nd.utils.StringUtils.appendNewLine;
 
-class BoardTest {
-    @Test
-    void create() {
-        Board board = new Board();
-        String[] colors = {Pawn.WHITE_COLOR, Pawn.BLACK_COLOR};
+public class BoardTest {
+    private Board board;
 
-        for (int i = 0; i < colors.length; i++) {
-            Pawn pawn = new Pawn(colors[i]);
-            board.add(pawn);
-            assertThat(board.size()).isEqualTo(i + 1);
-            assertThat(board.get(i)).isEqualTo(pawn);
-        }
+    @BeforeEach
+    public void setup() {
+        board = new Board();
     }
 
     @Test
-    void initialize() {
-        Board board = new Board();
+    public void create() {
         board.initialize();
-
-        assertThat(board.getWhitePawnsResult()).isEqualTo("pppppppp");
-        assertThat(board.getBlackPawnsResult()).isEqualTo("PPPPPPPP");
-        assertThat(board.print()).isEqualTo(
-                "........\n" +
-                        "PPPPPPPP\n" +
-                        "........\n" +
-                        "........\n" +
-                        "........\n" +
-                        "........\n" +
-                        "pppppppp\n" +
-                        "........"
-        );
+        assertEquals(32, board.pieceCount());
+        String blankRank = appendNewLine("........");
+        assertEquals(
+                appendNewLine("RNBQKBNR") +
+                        appendNewLine("PPPPPPPP") +
+                        blankRank + blankRank + blankRank + blankRank +
+                        appendNewLine("pppppppp") +
+                        appendNewLine("rnbqkbnr"),
+                board.showBoard());
     }
 }
