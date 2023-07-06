@@ -1,6 +1,6 @@
 package softeer2nd;
 
-import softeer2nd.chess.board.Board;
+import softeer2nd.chess.Board;
 
 import java.util.Scanner;
 
@@ -12,14 +12,14 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Board board = new Board();
         while (true) {
-            System.out.print("> ");
             String input = scanner.nextLine().trim();
             if(input.equals(START_COMMAND)) {
                 board.initialize();
-                System.out.println(board.showBoard());
+                System.out.println(board.print());
             }
             if(input.equals(FINISH_COMMAND)) break;
         }
         scanner.close();
+
     }
 }
