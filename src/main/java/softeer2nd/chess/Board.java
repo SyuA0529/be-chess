@@ -2,68 +2,155 @@ package softeer2nd.chess;
 
 import softeer2nd.chess.pieces.Piece;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static softeer2nd.utils.PositionUtils.*;
 import static softeer2nd.utils.StringUtils.*;
 
 public class Board {
     private static final int SIDE_LENGTH = 8;
 
-    private final List<Piece> whitePieces = new ArrayList<>();
-    private final List<Piece> blackPieces = new ArrayList<>();
+    private final List<Rank> board = new ArrayList<>();
+
+    public void initializeEmpty() {
+        board.clear();
+        for (int i = 0; i < SIDE_LENGTH; i++)
+            initBlankRank();
+    }
 
     public void initialize() {
-        initWhitePiece();
-        initBlackPieces();
+        board.clear();
+        initWhiteEdgeRank();
+        initPawnRank(Piece.Color.WHITE);
+
+        for (int i = 0; i < SIDE_LENGTH - 4; i++)
+            initBlankRank();
+
+        initPawnRank(Piece.Color.BLACK);
+        initBlackEdgeRank();
     }
 
-    private void initWhitePiece() {
-        whitePieces.clear();
-        for (int i = 0; i < SIDE_LENGTH; i++) whitePieces.add(Piece.createWhitePawn());
-        whitePieces.add(Piece.createWhiteRook());
-        whitePieces.add(Piece.createWhiteKnight());
-        whitePieces.add(Piece.createWhiteBishop());
-        whitePieces.add(Piece.createWhiteQueen());
-        whitePieces.add(Piece.createWhiteKing());
-        whitePieces.add(Piece.createWhiteBishop());
-        whitePieces.add(Piece.createWhiteKnight());
-        whitePieces.add(Piece.createWhiteRook());
+    private void initWhiteEdgeRank() {
+        Rank rank = new Rank();
+        rank.add(Piece.createWhiteRook());
+        rank.add(Piece.createWhiteKnight());
+        rank.add(Piece.createWhiteBishop());
+        rank.add(Piece.createWhiteQueen());
+        rank.add(Piece.createWhiteKing());
+        rank.add(Piece.createWhiteBishop());
+        rank.add(Piece.createWhiteKnight());
+        rank.add(Piece.createWhiteRook());
+        board.add(rank);
     }
 
-    private void initBlackPieces() {
-        blackPieces.clear();
-        for (int i = 0; i < SIDE_LENGTH; i++) blackPieces.add(Piece.createBlackPawn());
-        blackPieces.add(Piece.createBlackRook());
-        blackPieces.add(Piece.createBlackKnight());
-        blackPieces.add(Piece.createBlackBishop());
-        blackPieces.add(Piece.createBlackQueen());
-        blackPieces.add(Piece.createBlackKing());
-        blackPieces.add(Piece.createBlackBishop());
-        blackPieces.add(Piece.createBlackKnight());
-        blackPieces.add(Piece.createBlackRook());
+    private void initBlackEdgeRank() {
+        Rank rank = new Rank();
+        rank.add(Piece.createBlackRook());
+        rank.add(Piece.createBlackKnight());
+        rank.add(Piece.createBlackBishop());
+        rank.add(Piece.createBlackQueen());
+        rank.add(Piece.createBlackKing());
+        rank.add(Piece.createBlackBishop());
+        rank.add(Piece.createBlackKnight());
+        rank.add(Piece.createBlackRook());
+        board.add(rank);
+    }
+
+    private void initPawnRank(Piece.Color color) {
+        Rank rank = new Rank();
+        for (int i = 0; i < SIDE_LENGTH; i++)
+            rank.add(color.equals(Piece.Color.WHITE) ?
+                    Piece.createWhitePawn() : Piece.createBlackPawn());
+        board.add(rank);
+    }
+
+    private void initBlankRank() {
+        Rank rank = new Rank();
+        for (int i = 0; i < SIDE_LENGTH; i++)
+            rank.add(Piece.createBlank());
+        board.add(rank);
     }
 
     public String showBoard() {
-        String blankRank = "........";
         StringBuilder sb = new StringBuilder();
-        sb.append(getPrintLine(blackPieces.subList(SIDE_LENGTH, blackPieces.size())));
-        sb.append(getPrintLine(blackPieces.subList(0, SIDE_LENGTH)));
-
-        sb.append(appendNewLine(blankRank).repeat(4));
-
-        sb.append(getPrintLine(whitePieces.subList(0, SIDE_LENGTH)));
-        sb.append(getPrintLine(whitePieces.subList(SIDE_LENGTH, whitePieces.size())));
+        for (int i = SIDE_LENGTH - 1; i >= 0; i--)
+            sb.append(appendNewLine(board.get(i).showRank()));
         return sb.toString();
     }
 
-    private static String getPrintLine(List<Piece> pieces) {
-        StringBuilder sb = new StringBuilder();
-        pieces.forEach(p -> sb.append(p.getRepresentation()));
-        return appendNewLine(sb.toString());
+    public int countTotalPieces() {
+        return board.stream().mapToInt(Rank::countTotalPieces).sum();
     }
 
-    public int pieceCount() {
-        return whitePieces.size() + blackPieces.size();
+    public int countSpecificTypePieces(Piece.Color color, Piece.Type type) {
+        return board.stream()
+                .mapToInt(r -> r.countSpecificPiecesCount(color, type))
+                .sum();
+    }
+
+    public Piece findPiece(String position) {
+        return board.get(getRankNumFromPosition(position))
+                .get(getRowNumFromPosition(position));
+    }
+
+    public void move(String position, Piece piece) {
+        board.get(getRankNumFromPosition(position))
+                .set(getRowNumFromPosition(position), piece);
+    }
+
+    public double calculatePoint(Piece.Color color) {
+        double point = 0;
+        for (int row = 0; row < SIDE_LENGTH; row++)
+            point += calculateRowPoint(color, row);
+        return point;
+    }
+
+    private double calculateRowPoint(Piece.Color color, int row) {
+        int point = 0;
+        int curRowPawnCount = 0;
+
+        for (int rankNum = 0; rankNum < SIDE_LENGTH; rankNum++) {
+            Piece curPiece = board.get(rankNum).get(row);
+            if(!curPiece.getColor().equals(color)) continue;
+
+            point += curPiece.getType().getDefaultPoint();
+            if(curPiece.getType().equals(Piece.Type.PAWN)) curRowPawnCount++;
+        }
+
+        return curRowPawnCount > 1 ? point - (Piece.Type.PAWN.getDefaultPoint() / 2) * curRowPawnCount : point;
+    }
+
+    public List<Piece> getSortedColorPiecesByPoint(Piece.Color color) {
+        List<Piece> pieces = new ArrayList<>();
+        board.forEach(r -> pieces.addAll(r.getSpecificColorPieces(color)));
+        pieces.sort(Collections.reverseOrder());
+        return pieces;
+    }
+
+    private static class Rank extends ArrayList<Piece> {
+        public String showRank() {
+            StringBuilder sb = new StringBuilder();
+            this.forEach(p -> sb.append(p.getRepresentation()));
+            return sb.toString();
+        }
+
+        public int countTotalPieces() {
+            return (int) this.stream()
+                    .filter(p -> p.getType() != Piece.Type.NO_PIECE)
+                    .count();
+        }
+
+        public int countSpecificPiecesCount(Piece.Color color, Piece.Type type) {
+            return (int) this.stream()
+                    .filter(p -> p.getColor().equals(color) && p.getType().equals(type))
+                    .count();
+        }
+
+        public List<Piece> getSpecificColorPieces(Piece.Color color) {
+            return this.stream()
+                    .filter(p -> p.getColor().equals(color))
+                    .collect(Collectors.toList());
+        }
     }
 }
