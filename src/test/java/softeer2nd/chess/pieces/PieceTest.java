@@ -2,10 +2,17 @@ package softeer2nd.chess.pieces;
 
 import org.junit.jupiter.api.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
+import static softeer2nd.chess.pieces.Piece.*;
 import static softeer2nd.chess.pieces.Piece.Type;
+import static softeer2nd.chess.pieces.PieceFactory.*;
 
 public class PieceTest {
+    Type[] types = {Type.PAWN, Type.KNIGHT, Type.ROOK, Type.BISHOP, Type.QUEEN, Type.KING};
+
     @Test
     @DisplayName("eunm으로부터 Representation 가져오기")
     void getRepresentationFromEnumTest() {
@@ -27,70 +34,55 @@ public class PieceTest {
     @Test
     @DisplayName("기물 생성")
     void createPiece() {
-        verifyPiece(Piece.createWhitePawn(new Position("a1")), Piece.createBlackPawn(new Position("a1")), Type.PAWN);
-        verifyPiece(Piece.createWhiteKnight(new Position("a1")), Piece.createBlackKnight(new Position("a1")), Type.KNIGHT);
-        verifyPiece(Piece.createWhiteRook(new Position("a1")), Piece.createBlackRook(new Position("a1")), Type.ROOK);
-        verifyPiece(Piece.createWhiteBishop(new Position("a1")), Piece.createBlackBishop(new Position("a1")), Type.BISHOP);
-        verifyPiece(Piece.createWhiteQueen(new Position("a1")), Piece.createBlackQueen(new Position("a1")), Type.QUEEN);
-        verifyPiece(Piece.createWhiteKing(new Position("a1")), Piece.createBlackKing(new Position("a1")), Type.KING);
+        Position position = new Position("a1");
+        for (Type type : types)
+            verifyPiece(createNotBlank(Color.WHITE, type, position),
+                        createNotBlank(Color.BLACK, type, position),
+                        type);
 
-        Piece blank = Piece.createBlank(new Position("a1"));
-        assertThat(blank.isWhite()).isFalse();
-        assertThat(blank.isBlack()).isFalse();
+
+        Piece blank = createBlank(position);
+        assertThat(blank.isBlank()).isTrue();
         assertThat(blank.getType()).isEqualTo(Type.NO_PIECE);
     }
 
     private void verifyPiece(final Piece whitePiece, final Piece blackPiece, final Type type) {
-        assertThat(whitePiece.isWhite()).isTrue();
+        assertThat(whitePiece.isColor(Color.WHITE)).isTrue();
         assertThat(whitePiece.getType()).isEqualTo(type);
 
-        assertThat(blackPiece.isBlack()).isTrue();
+        assertThat(blackPiece.isColor(Color.BLACK)).isTrue();
         assertThat(blackPiece.getType()).isEqualTo(type);
     }
 
     @Test
     @DisplayName("기물 색상 검증")
     void testVerifyPieceColor() {
-        Piece[] whitePieces = {
-                Piece.createWhitePawn(new Position("a1")), Piece.createWhiteKnight(new Position("a1")),
-                Piece.createWhiteRook(new Position("a1")), Piece.createWhiteBishop(new Position("a1")),
-                Piece.createWhiteQueen(new Position("a1")), Piece.createWhiteKing(new Position("a1"))
-        };
+        Position position = new Position("a1");
 
-        Piece[] blackPieces = {
-                Piece.createBlackPawn(new Position("a1")), Piece.createBlackKnight(new Position("a1")),
-                Piece.createBlackRook(new Position("a1")), Piece.createBlackBishop(new Position("a1")),
-                Piece.createBlackQueen(new Position("a1")), Piece.createBlackKing(new Position("a1"))
-        };
-
-        for (Piece whitePiece : whitePieces) {
-            assertThat(whitePiece.isWhite()).isTrue();
-            assertThat(whitePiece.isBlack()).isFalse();
+        List<Piece> whitePieces = new ArrayList<>();
+        List<Piece> blackPieces = new ArrayList<>();
+        for (Type type : types) {
+            whitePieces.add(createNotBlank(Color.WHITE, type, position));
+            blackPieces.add(createNotBlank(Color.BLACK, type, position));
         }
 
-
-        for (Piece blackPiece : blackPieces) {
-            assertThat(blackPiece.isWhite()).isFalse();
-            assertThat(blackPiece.isBlack()).isTrue();
+        for (int i = 0; i < whitePieces.size(); i++) {
+            assertThat(whitePieces.get(i).isColor(Color.WHITE)).isTrue();
+            assertThat(whitePieces.get(i).isColor(Color.BLACK)).isFalse();
+            assertThat(blackPieces.get(i).isColor(Color.WHITE)).isFalse();
+            assertThat(blackPieces.get(i).isColor(Color.BLACK)).isTrue();
         }
     }
 
     @Test
     @DisplayName("기물 이름 검증")
     void testVerifyPieceRepresentation() {
-        assertThat(Piece.createWhiteKing(new Position("a1")).getRepresentation()).isEqualTo(Type.KING.getWhiteRepresentation());
-        assertThat(Piece.createWhiteQueen(new Position("a1")).getRepresentation()).isEqualTo(Type.QUEEN.getWhiteRepresentation());
-        assertThat(Piece.createWhiteBishop(new Position("a1")).getRepresentation()).isEqualTo(Type.BISHOP.getWhiteRepresentation());
-        assertThat(Piece.createWhiteKnight(new Position("a1")).getRepresentation()).isEqualTo(Type.KNIGHT.getWhiteRepresentation());
-        assertThat(Piece.createWhiteRook(new Position("a1")).getRepresentation()).isEqualTo(Type.ROOK.getWhiteRepresentation());
-        assertThat(Piece.createWhitePawn(new Position("a1")).getRepresentation()).isEqualTo(Type.PAWN.getWhiteRepresentation());
-
-
-        assertThat(Piece.createBlackKing(new Position("a1")).getRepresentation()).isEqualTo(Type.KING.getBlackRepresentation());
-        assertThat(Piece.createBlackQueen(new Position("a1")).getRepresentation()).isEqualTo(Type.QUEEN.getBlackRepresentation());
-        assertThat(Piece.createBlackBishop(new Position("a1")).getRepresentation()).isEqualTo(Type.BISHOP.getBlackRepresentation());
-        assertThat(Piece.createBlackKnight(new Position("a1")).getRepresentation()).isEqualTo(Type.KNIGHT.getBlackRepresentation());
-        assertThat(Piece.createBlackRook(new Position("a1")).getRepresentation()).isEqualTo(Type.ROOK.getBlackRepresentation());
-        assertThat(Piece.createBlackPawn(new Position("a1")).getRepresentation()).isEqualTo(Type.PAWN.getBlackRepresentation());
+        Position position = new Position("a1");
+        for (Type type : types) {
+            assertThat(PieceFactory.createNotBlank(Color.WHITE, type, position).getRepresentation())
+                    .isEqualTo(type.getWhiteRepresentation());
+            assertThat(PieceFactory.createNotBlank(Color.BLACK, type, position).getRepresentation())
+                    .isEqualTo(type.getBlackRepresentation());
+        }
     }
 }

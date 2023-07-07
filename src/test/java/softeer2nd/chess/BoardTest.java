@@ -12,6 +12,7 @@ import softeer2nd.chess.pieces.Position;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
+import static softeer2nd.chess.pieces.PieceFactory.*;
 
 public class BoardTest {
     private Board board;
@@ -44,10 +45,13 @@ public class BoardTest {
         board.initialize();
 
         assertThat(board.findPiece(new Position("a8")))
-                .isEqualTo(Piece.createBlackRook(new Position("a8")));
-        assertThat(board.findPiece(new Position("h8"))).isEqualTo(Piece.createBlackRook(new Position("h8")));
-        assertThat(board.findPiece(new Position("a1"))).isEqualTo(Piece.createWhiteRook(new Position("a1")));
-        assertThat(board.findPiece(new Position("h1"))).isEqualTo(Piece.createWhiteRook(new Position("h1")));
+                .isEqualTo(createNotBlank(Color.BLACK, Type.ROOK, new Position("a8")));
+        assertThat(board.findPiece(new Position("h8")))
+                .isEqualTo(createNotBlank(Color.BLACK, Type.ROOK, new Position("h8")));
+        assertThat(board.findPiece(new Position("a1")))
+                .isEqualTo(createNotBlank(Color.WHITE, Type.ROOK, new Position("a1")));
+        assertThat(board.findPiece(new Position("h1")))
+                .isEqualTo(createNotBlank(Color.WHITE, Type.ROOK, new Position("h1")));
     }
 
     @Test
@@ -56,7 +60,7 @@ public class BoardTest {
         board.initializeEmpty();
 
         Position position = new Position("b5");
-        Piece piece = Piece.createBlackRook(position);
+        Piece piece = createNotBlank(Color.BLACK, Type.ROOK, position);
         board.putPiece(position, piece);
         assertThat(board.findPiece(position)).isEqualTo(piece);
     }

@@ -3,6 +3,7 @@ package softeer2nd.chess.board;
 import softeer2nd.chess.pieces.Piece;
 import softeer2nd.chess.pieces.Piece.Type;
 import softeer2nd.chess.pieces.Piece.Color;
+import softeer2nd.chess.pieces.PieceFactory;
 import softeer2nd.chess.pieces.Position;
 
 import java.util.*;
@@ -21,77 +22,62 @@ public class Board {
 
     public void initialize() {
         board.clear();
-        initWhiteEdgeRank();
+        initEdgeRank(Color.WHITE);
         initPawnRank(Piece.Color.WHITE);
 
         for (int i = 0; i < SIDE_LENGTH - 4; i++)
             initBlankRank(i + 3);
 
         initPawnRank(Piece.Color.BLACK);
-        initBlackEdgeRank();
+        initEdgeRank(Color.BLACK);
     }
 
-    private void initWhiteEdgeRank() {
+    private void initEdgeRank(Color color) {
         Rank rank = new Rank();
-        Queue<Position> positionQueue = new LinkedList<>();
-        for (int i = 0; i < SIDE_LENGTH; i++)
-            positionQueue.offer(new Position(Character.toString('a' + i) + "1"));
-        rank.add(Piece.createWhiteRook(positionQueue.poll()));
-        rank.add(Piece.createWhiteKnight(positionQueue.poll()));
-        rank.add(Piece.createWhiteBishop(positionQueue.poll()));
-        rank.add(Piece.createWhiteQueen(positionQueue.poll()));
-        rank.add(Piece.createWhiteKing(positionQueue.poll()));
-        rank.add(Piece.createWhiteBishop(positionQueue.poll()));
-        rank.add(Piece.createWhiteKnight(positionQueue.poll()));
-        rank.add(Piece.createWhiteRook(positionQueue.poll()));
-        board.add(rank);
-    }
+        String line = color.equals(Color.WHITE) ? "1" : "8";
+        List<Type> types = List.of(Type.ROOK, Type.KNIGHT, Type.BISHOP, Type.QUEEN,
+                Type.KING, Type.BISHOP, Type.KNIGHT, Type.ROOK);
 
-    private void initBlackEdgeRank() {
-        Rank rank = new Rank();
-        Queue<Position> positionQueue = new LinkedList<>();
         for (int i = 0; i < SIDE_LENGTH; i++)
-            positionQueue.offer(new Position(Character.toString('a' + i) + "8"));
-        rank.add(Piece.createBlackRook(positionQueue.poll()));
-        rank.add(Piece.createBlackKnight(positionQueue.poll()));
-        rank.add(Piece.createBlackBishop(positionQueue.poll()));
-        rank.add(Piece.createBlackQueen(positionQueue.poll()));
-        rank.add(Piece.createBlackKing(positionQueue.poll()));
-        rank.add(Piece.createBlackBishop(positionQueue.poll()));
-        rank.add(Piece.createBlackKnight(positionQueue.poll()));
-        rank.add(Piece.createBlackRook(positionQueue.poll()));
+            rank.add(PieceFactory.createNotBlank(
+                    color,
+                    types.get(i),
+                    new Position(Character.toString('a' + i) + line)));
         board.add(rank);
     }
 
     private void initPawnRank(Color color) {
         Rank rank = new Rank();
+        String line = color.equals(Color.WHITE) ? "2" : "7";
         for (int i = 0; i < SIDE_LENGTH; i++)
-            rank.add(color.equals(Piece.Color.WHITE) ?
-                    Piece.createWhitePawn(new Position(Character.toString('a' + i) + "2")) :
-                    Piece.createBlackPawn(new Position(Character.toString('a' + i) + "7")));
+            rank.add(PieceFactory.createNotBlank(
+                    color,
+                    Type.PAWN,
+                    new Position(Character.toString('a' + i) + line)));
         board.add(rank);
     }
 
     private void initBlankRank(int rankNum) {
         Rank rank = new Rank();
         for (int i = 0; i < SIDE_LENGTH; i++)
-            rank.add(Piece.createBlank(new Position(Character.toString('a' + i) + rankNum)));
+            rank.add(PieceFactory.createBlank(
+                        new Position(Character.toString('a' + i) + rankNum)));
         board.add(rank);
     }
 
     public Piece findPiece(Position position) {
         return board.get(position.getRankNum())
-                .get(position.getRowNum());
+                .get(position.getColumnNum());
     }
 
     public void putPiece(Position position, Piece piece) {
-        board.get(position.getRankNum()).set(position.getRowNum(), piece);
+        board.get(position.getRankNum()).set(position.getColumnNum(), piece);
     }
 
-    public List<Piece> getRow(int rowNum) {
+    public List<Piece> getColumn(int columnNum) {
         List<Piece> pieces = new ArrayList<>();
         for (int rankNum = 0; rankNum < SIDE_LENGTH; rankNum++)
-            pieces.add(board.get(rankNum).get(rowNum));
+            pieces.add(board.get(rankNum).get(columnNum));
         return pieces;
     }
 

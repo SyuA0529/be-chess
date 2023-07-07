@@ -8,10 +8,15 @@ import softeer2nd.chess.exception.CannotMovePieceException;
 import softeer2nd.chess.exception.CannotMovePosException;
 import softeer2nd.chess.exception.OutOfBoardException;
 import softeer2nd.chess.pieces.Piece;
+import softeer2nd.chess.pieces.Piece.Type;
+import softeer2nd.chess.pieces.Piece.Color;
 import softeer2nd.chess.pieces.Position;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static softeer2nd.chess.pieces.PieceFactory.*;
 
 class ChessGameTest {
     Board board;
@@ -31,8 +36,8 @@ class ChessGameTest {
         Position sourcePosition = new Position("b2");
         Position targetPosition = new Position("b3");
         chessGame.movePiece(sourcePosition, targetPosition);
-        assertEquals(Piece.createBlank(sourcePosition), board.findPiece(sourcePosition));
-        assertEquals(Piece.createWhitePawn(targetPosition), board.findPiece(targetPosition));
+        assertEquals(createBlank(sourcePosition), board.findPiece(sourcePosition));
+        assertEquals(createNotBlank(Color.WHITE, Type.PAWN, targetPosition), board.findPiece(targetPosition));
     }
 
     @Test
@@ -40,14 +45,13 @@ class ChessGameTest {
     void cannotMoveTeamPiecePos() {
         //given
         board.initializeEmpty();
-        Position pos1 = new Position("b2");
-        Position pos2 = new Position("b3");
-        board.putPiece(pos1, Piece.createWhiteKing(pos1));
-        board.putPiece(pos2, Piece.createWhiteKing(pos2));
+        List<Position> positions = List.of(new Position("b2"), new Position("b3"));
+        for (Position pos : positions)
+            board.putPiece(pos, createNotBlank(Color.WHITE, Type.KING, pos));
 
         //when
         //then
-        assertThatThrownBy(() -> chessGame.movePiece(pos1, pos2))
+        assertThatThrownBy(() -> chessGame.movePiece(positions.get(0), positions.get(1)))
                 .isInstanceOf(CannotMovePosException.class);
     }
 
@@ -56,18 +60,18 @@ class ChessGameTest {
     void calculatePoint() {
         board.initializeEmpty();
 
-        addPiece("b6", Piece.createBlackPawn(new Position("b6")));
-        addPiece("e6", Piece.createBlackQueen(new Position("e6")));
-        addPiece("b8", Piece.createBlackKing(new Position("b8")));
-        addPiece("c8", Piece.createBlackRook(new Position("c8")));
+        addPiece(Color.BLACK, Type.PAWN, "b6");
+        addPiece(Color.BLACK, Type.QUEEN, "e6");
+        addPiece(Color.BLACK, Type.KING, "b8");
+        addPiece(Color.BLACK, Type.ROOK, "c8");
 
-        addPiece("f2", Piece.createWhitePawn(new Position("f2")));
-        addPiece("g2", Piece.createWhitePawn(new Position("g2")));
-        addPiece("e1", Piece.createWhiteRook(new Position("e1")));
-        addPiece("f1", Piece.createWhiteKing(new Position("f1")));
+        addPiece(Color.WHITE, Type.PAWN, "f2");
+        addPiece(Color.WHITE, Type.PAWN, "g2");
+        addPiece(Color.WHITE, Type.ROOK, "e1");
+        addPiece(Color.WHITE, Type.KING, "f1");
 
-        assertEquals(15.0, chessGame.calculatePoint(Piece.Color.BLACK), 0.01);
-        assertEquals(7.0, chessGame.calculatePoint(Piece.Color.WHITE), 0.01);
+        assertEquals(15.0, chessGame.calculatePoint(Color.BLACK), 0.01);
+        assertEquals(7.0, chessGame.calculatePoint(Color.WHITE), 0.01);
     }
 
     @Test
@@ -87,16 +91,16 @@ class ChessGameTest {
     void moveKing() {
         //given
         board.initializeEmpty();
-        Position kingPos = new Position("a1");
-        board.putPiece(kingPos, Piece.createWhiteKing(kingPos));
-        addPiece("b2", Piece.createBlackPawn(new Position("b2")));
-        addPiece("c3", Piece.createWhitePawn(new Position("c3")));
+        addPiece(Color.WHITE, Type.KING, "a1");
+        addPiece(Color.BLACK, Type.PAWN, "b2");
+        addPiece(Color.WHITE, Type.PAWN, "c3");
 
         //when
         chessGame.movePiece(new Position("a1"), new Position("b2"));
 
         //then
-        assertThat(board.findPiece(new Position("b2"))).isEqualTo(Piece.createWhiteKing(kingPos));
+        assertThat(board.findPiece(new Position("b2"))).isEqualTo(
+                createNotBlank(Color.WHITE, Type.KING, new Position("b2")));
         assertThatThrownBy(() -> chessGame.movePiece(new Position("b2"), new Position("c4")))
                 .isInstanceOf(CannotMovePosException.class);
         assertThatThrownBy(() -> chessGame.movePiece(new Position("b2"), new Position("c3")))
@@ -110,14 +114,15 @@ class ChessGameTest {
     void queenMove() {
         //given
         board.initializeEmpty();
-        Piece whiteQueen = Piece.createWhiteQueen(new Position("a1"));
-        addPiece("a1", whiteQueen);
-        addPiece("a8", Piece.createBlackPawn(new Position("a8")));
-        addPiece("h8", Piece.createWhitePawn(new Position("h8")));
-        addPiece("h3", Piece.createWhitePawn(new Position("h3")));
+
+        addPiece(Color.WHITE, Type.QUEEN, "a1");
+        addPiece(Color.BLACK, Type.PAWN, "a8");
+        addPiece(Color.WHITE, Type.PAWN, "h8");
+        addPiece(Color.WHITE, Type.PAWN, "h3");
 
         //when
         //then
+        Piece whiteQueen = board.findPiece(new Position("a1"));
         chessGame.movePiece(new Position("a1"), new Position("a8"));
         assertThat(board.findPiece(new Position("a8"))).isEqualTo(whiteQueen);
         chessGame.movePiece(new Position("a8"), new Position("h1"));
@@ -130,7 +135,9 @@ class ChessGameTest {
                 .isInstanceOf(CannotMovePosException.class);
     }
     
-    private void addPiece(String position, Piece piece) {
+    private void addPiece(Color color, Type type, String position) {
+        Piece piece = type.equals(Type.NO_PIECE) ?
+                createBlank(new Position(position)): createNotBlank(color, type, new Position(position));
         board.putPiece(new Position(position), piece);
     }
 }
