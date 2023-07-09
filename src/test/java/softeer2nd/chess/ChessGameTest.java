@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import softeer2nd.chess.board.Board;
 import softeer2nd.chess.exception.IllegalMovePieceException;
 import softeer2nd.chess.exception.IllegalMovePositionException;
+import softeer2nd.chess.exception.IllegalTurnException;
 import softeer2nd.chess.pieces.Piece;
 import softeer2nd.chess.pieces.Piece.Type;
 import softeer2nd.chess.pieces.Piece.Color;
@@ -30,7 +31,6 @@ class ChessGameTest {
     @Nested
     @DisplayName("movePiece method")
     class MovePiece {
-
         @Nested
         @DisplayName("기물이 공백이라면")
         class IsPieceBlank {
@@ -50,6 +50,39 @@ class ChessGameTest {
         @Nested
         @DisplayName("기물이 공백이 아니라면")
         class IsPieceNotBlank {
+            @Nested
+            @DisplayName("올바른 이동일 때 턴이 흰색이라면")
+            class IsTurnWhite {
+                @Test
+                @DisplayName("검은색 기물을 움직이면 IllegalTurnException이 발생한다")
+                void cannotMoveBlackPiece() {
+                    //given
+                    board.initialize();
+
+                    //when
+                    //then
+                    assertThatThrownBy(() -> chessGame.movePiece(new Position("a7"), new Position("a6")))
+                            .isInstanceOf(IllegalTurnException.class);
+                }
+            }
+
+            @Nested
+            @DisplayName("올바른 이동일 때 턴이 검은색이라면")
+            class IsTurnBlack {
+                @Test
+                @DisplayName("흰색 기물을 움직이면 IllegalTurnException이 발생한다")
+                void cannotMoveWhitePiece() {
+                    //given
+                    board.initialize();
+                    chessGame.movePiece(new Position("a2"), new Position("a3"));
+
+                    //when
+                    //then
+                    assertThatThrownBy(() -> chessGame.movePiece(new Position("b2"), new Position("b3")))
+                            .isInstanceOf(IllegalTurnException.class);
+                }
+            }
+
             @Nested
             @DisplayName("목적지가 기물이 이동할 수 있는 위치라면")
             class IsPieceCanMoveToPosition {

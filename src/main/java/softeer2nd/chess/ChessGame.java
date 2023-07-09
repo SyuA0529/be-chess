@@ -2,6 +2,7 @@ package softeer2nd.chess;
 
 import softeer2nd.chess.board.Board;
 import softeer2nd.chess.exception.IllegalMovePositionException;
+import softeer2nd.chess.exception.IllegalTurnException;
 import softeer2nd.chess.pieces.Direction;
 import softeer2nd.chess.pieces.Piece;
 import softeer2nd.chess.pieces.Piece.Color;
@@ -14,9 +15,11 @@ import java.util.stream.IntStream;
 import static softeer2nd.chess.pieces.PieceFactory.*;
 
 public class ChessGame {
+    private Color turnColor;
     private final Board board;
 
     public ChessGame(Board board) {
+        this.turnColor =  Color.WHITE;
         this.board = board;
     }
 
@@ -25,10 +28,12 @@ public class ChessGame {
 
         verifyPathPositions(targetPos, curPiece);
         verifyTargetPosition(targetPos, curPiece);
+        verifyTurn(sourcePos);
 
         curPiece.changePosition(targetPos);
         board.putPiece(targetPos, curPiece);
         board.putPiece(sourcePos, createBlank(sourcePos));
+        changeTurn();
     }
 
     public double calculatePoint(Color color) {
@@ -48,6 +53,20 @@ public class ChessGame {
         return point;
     }
 
+
+    private void changeTurn() {
+        Color nextTurnColor = Color.WHITE;
+        if(this.turnColor.equals(Color.WHITE)) {
+            nextTurnColor = Color.BLACK;
+        }
+        this.turnColor = nextTurnColor;
+    }
+
+    private void verifyTurn(Position sourcePos) {
+        if(!board.findPiece(sourcePos).isColor(turnColor)) {
+            throw new IllegalTurnException();
+        }
+    }
 
     private void verifyPathPositions(Position targetPos, Piece sourcePiece) {
         for (Position pos : sourcePiece.getMovePath(targetPos)) {
