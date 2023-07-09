@@ -1,14 +1,20 @@
 package softeer2nd.chess.pieces;
 
-import java.util.Objects;
+import softeer2nd.chess.board.Board;
+import softeer2nd.chess.exception.IllegalMovePositionException;
 
-public class Piece implements Comparable<Piece>{
+import java.util.*;
+
+
+public abstract class Piece implements Comparable<Piece>{
     private final Color color;
     private final Type type;
+    private final Position position;
 
-    private Piece(Color color, Type type) {
+    protected Piece(Color color, Type type, Position position) {
         this.color = color;
         this.type = type;
+        this.position = position;
     }
 
     public Color getColor() {
@@ -19,77 +25,60 @@ public class Piece implements Comparable<Piece>{
         return type;
     }
 
+    public Position getPosition() {
+        return position;
+    }
+
     public char getRepresentation() {
         if(color.equals(Color.BLACK)) return type.getBlackRepresentation();
         return type.getWhiteRepresentation();
     }
 
-    public static Piece createBlank() {
-        return new Piece(Color.NOCOLOR, Type.NO_PIECE);
+    public boolean isColor(Color color) {
+        return getColor().equals(color);
     }
 
-    private static Piece createWhite(Type type) {
-        return new Piece(Color.WHITE, type);
+    public boolean isType(Type type) {
+        return getType().equals(type);
     }
 
-    public static Piece createWhitePawn() {
-        return createWhite(Type.PAWN);
+    public boolean isBlank() {
+        return type.equals(Type.NO_PIECE);
     }
 
-    public static Piece createWhiteKnight() {
-        return createWhite(Type.KNIGHT);
+    public List<Position> getMovePath(Position targetPos) {
+        Direction direction = getMoveDirection(targetPos);
+
+        List<Position> path = new ArrayList<>();
+        for (int moveCount = 1; moveCount < Board.SIDE_LENGTH; moveCount++) {
+            Position curPos = new Position(
+                    getPosition().getFileNum() + direction.getXDegree() * moveCount,
+                    getPosition().getRankNum() + direction.getYDegree() * moveCount);
+            if(curPos.equals(targetPos)) {
+                break;
+            }
+            path.add(curPos);
+        }
+        return path;
     }
 
-    public static Piece createWhiteRook() {
-        return createWhite(Type.ROOK);
+    protected abstract List<Direction> getMovableDirection();
+
+    public Direction getMoveDirection(Position targetPos) {
+        return getMovableDirection().stream()
+                .filter(d -> isMovablePositionByDirection(targetPos, d))
+                .findFirst()
+                .orElseThrow(IllegalMovePositionException::new);
     }
 
-    public static Piece createWhiteBishop() {
-        return createWhite(Type.BISHOP);
+    protected abstract boolean isMovablePositionByDirection(Position targetPos, Direction direction);
+
+    public void changePosition(Position targetPos) {
+        position.changePos(targetPos);
     }
 
-    public static Piece createWhiteQueen() {
-        return createWhite(Type.QUEEN);
-    }
-
-    public static Piece createWhiteKing() {
-        return createWhite(Type.KING);
-    }
-
-    private static Piece createBlack(Type type) {
-        return new Piece(Color.BLACK, type);
-    }
-
-    public static Piece createBlackPawn() {
-        return createBlack(Type.PAWN);
-    }
-
-    public static Piece createBlackKnight() {
-        return createBlack(Type.KNIGHT);
-    }
-
-    public static Piece createBlackRook() {
-        return createBlack(Type.ROOK);
-    }
-
-    public static Piece createBlackBishop() {
-        return createBlack(Type.BISHOP);
-    }
-
-    public static Piece createBlackQueen() {
-        return createBlack(Type.QUEEN);
-    }
-
-    public static Piece createBlackKing() {
-        return createBlack(Type.KING);
-    }
-
-    public boolean isWhite() {
-        return getColor().equals(Color.WHITE);
-    }
-
-    public boolean isBlack() {
-        return getColor().equals(Color.BLACK);
+    public double getDefaultPoint() {
+        return getType().getDefaultPoint();
     }
 
     @Override
@@ -102,12 +91,12 @@ public class Piece implements Comparable<Piece>{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Piece piece = (Piece) o;
-        return color == piece.color && type == piece.type;
+        return color == piece.color && type == piece.type && Objects.equals(position, piece.position);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(color, type);
+        return Objects.hash(color, type, position);
     }
 
     public enum Color {
