@@ -6,36 +6,39 @@ import static softeer2nd.utils.PositionUtils.*;
 
 public class Position {
     private int rankNum;
-    private int columnNum;
+    private int fileNum;
 
     public Position(String pos) {
-        this(getRankNumFromPos(pos), getColumnNumFromPos(pos));
+        this(getFileNumFromPosition(pos), getRankNumFromPosition(pos));
     }
 
-    public Position(int rankNum, int columnNum) {
+    public Position(int fileNum, int rankNum) {
+        verifyNumberInBoard(fileNum);
+        this.fileNum = fileNum;
+
+        verifyNumberInBoard(rankNum);
         this.rankNum = rankNum;
-        this.columnNum = columnNum;
     }
 
     public void changePos(Position targetPos) {
         this.rankNum = targetPos.getRankNum();
-        this.columnNum = targetPos.getColumnNum();
+        this.fileNum = targetPos.getFileNum();
     }
 
     public int getRankNum() {
         return rankNum;
     }
 
-    public int getColumnNum() {
-        return columnNum;
+    public int getFileNum() {
+        return fileNum;
     }
 
     public int getRankDiff(Position position) {
         return this.getRankNum() - position.getRankNum();
     }
 
-    public int getColumnDiff(Position position) {
-        return this.getColumnNum() - position.getColumnNum();
+    public int getFileDiff(Position position) {
+        return this.getFileNum() - position.getFileNum();
     }
 
     @Override
@@ -43,12 +46,12 @@ public class Position {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Position position = (Position) o;
-        return rankNum == position.rankNum && columnNum == position.columnNum;
+        return rankNum == position.rankNum && fileNum == position.fileNum;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rankNum, columnNum);
+        return Objects.hash(rankNum, fileNum);
     }
 
 }

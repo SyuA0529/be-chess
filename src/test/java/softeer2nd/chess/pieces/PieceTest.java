@@ -2,87 +2,149 @@ package softeer2nd.chess.pieces;
 
 import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import softeer2nd.chess.pieces.Piece.Type;
+import softeer2nd.chess.pieces.Piece.Color;
 
 import static org.assertj.core.api.Assertions.*;
-import static softeer2nd.chess.pieces.Piece.*;
-import static softeer2nd.chess.pieces.Piece.Type;
-import static softeer2nd.chess.pieces.PieceFactory.*;
 
 public class PieceTest {
-    Type[] types = {Type.PAWN, Type.KNIGHT, Type.ROOK, Type.BISHOP, Type.QUEEN, Type.KING};
+    final Type[] types = {Type.PAWN, Type.KNIGHT, Type.ROOK, Type.BISHOP, Type.QUEEN, Type.KING};
+    final Color[] colors = {Color.WHITE, Color.BLACK};
 
-    @Test
-    @DisplayName("eunm으로부터 Representation 가져오기")
-    void getRepresentationFromEnumTest() {
-        assertThat(Type.PAWN.getWhiteRepresentation()).isEqualTo('p');
-        assertThat(Type.ROOK.getWhiteRepresentation()).isEqualTo('r');
-        assertThat(Type.KNIGHT.getWhiteRepresentation()).isEqualTo('n');
-        assertThat(Type.BISHOP.getWhiteRepresentation()).isEqualTo('b');
-        assertThat(Type.QUEEN.getWhiteRepresentation()).isEqualTo('q');
-        assertThat(Type.KING.getWhiteRepresentation()).isEqualTo('k');
-
-        assertThat(Type.PAWN.getBlackRepresentation()).isEqualTo('P');
-        assertThat(Type.ROOK.getBlackRepresentation()).isEqualTo('R');
-        assertThat(Type.KNIGHT.getBlackRepresentation()).isEqualTo('N');
-        assertThat(Type.BISHOP.getBlackRepresentation()).isEqualTo('B');
-        assertThat(Type.QUEEN.getBlackRepresentation()).isEqualTo('Q');
-        assertThat(Type.KING.getBlackRepresentation()).isEqualTo('K');
-    }
-
-    @Test
-    @DisplayName("기물 생성")
-    void createPiece() {
-        Position position = new Position("a1");
-        for (Type type : types)
-            verifyPiece(createNotBlank(Color.WHITE, type, position),
-                        createNotBlank(Color.BLACK, type, position),
-                        type);
-
-
-        Piece blank = createBlank(position);
-        assertThat(blank.isBlank()).isTrue();
-        assertThat(blank.getType()).isEqualTo(Type.NO_PIECE);
-    }
-
-    private void verifyPiece(final Piece whitePiece, final Piece blackPiece, final Type type) {
-        assertThat(whitePiece.isColor(Color.WHITE)).isTrue();
-        assertThat(whitePiece.getType()).isEqualTo(type);
-
-        assertThat(blackPiece.isColor(Color.BLACK)).isTrue();
-        assertThat(blackPiece.getType()).isEqualTo(type);
-    }
-
-    @Test
-    @DisplayName("기물 색상 검증")
-    void testVerifyPieceColor() {
-        Position position = new Position("a1");
-
-        List<Piece> whitePieces = new ArrayList<>();
-        List<Piece> blackPieces = new ArrayList<>();
-        for (Type type : types) {
-            whitePieces.add(createNotBlank(Color.WHITE, type, position));
-            blackPieces.add(createNotBlank(Color.BLACK, type, position));
+    @Nested
+    @DisplayName("isColor method")
+    class IsColor {
+        @Nested
+        @DisplayName("주어진 색상과 기물의 색상이 동일하다면")
+        class GivenColorIsEqualToPieceColor {
+            @Test
+            @DisplayName("true를 반환한다")
+            void returnTrue() {
+                for (Color color : colors) {
+                    for (Type type : types) {
+                        Piece piece = PieceFactory.createNotBlank(color, type, new Position("a1"));
+                        assertThat(piece.isColor(color)).isTrue();
+                    }
+                }
+            }
         }
 
-        for (int i = 0; i < whitePieces.size(); i++) {
-            assertThat(whitePieces.get(i).isColor(Color.WHITE)).isTrue();
-            assertThat(whitePieces.get(i).isColor(Color.BLACK)).isFalse();
-            assertThat(blackPieces.get(i).isColor(Color.WHITE)).isFalse();
-            assertThat(blackPieces.get(i).isColor(Color.BLACK)).isTrue();
+        @Nested
+        @DisplayName("주어진 색상과 기물의 색상이 동일하지 않다면")
+        class GivenColorIsNotEqualToPieceColor {
+            @Test
+            @DisplayName("false를 반환한다")
+            void returnFalse() {
+                for (Type type : types) {
+                    Piece piece = PieceFactory.createNotBlank(Color.WHITE, type, new Position("a1"));
+                    assertThat(piece.isColor(Color.BLACK)).isFalse();
+                }
+
+                for (Type type : types) {
+                    Piece piece = PieceFactory.createNotBlank(Color.BLACK, type, new Position("a1"));
+                    assertThat(piece.isColor(Color.WHITE)).isFalse();
+                }
+            }
         }
     }
 
-    @Test
-    @DisplayName("기물 이름 검증")
-    void testVerifyPieceRepresentation() {
-        Position position = new Position("a1");
-        for (Type type : types) {
-            assertThat(PieceFactory.createNotBlank(Color.WHITE, type, position).getRepresentation())
-                    .isEqualTo(type.getWhiteRepresentation());
-            assertThat(PieceFactory.createNotBlank(Color.BLACK, type, position).getRepresentation())
-                    .isEqualTo(type.getBlackRepresentation());
+    @Nested
+    @DisplayName("getRepresentation method")
+    class GetRepresentation {
+        @Nested
+        @DisplayName("기물이 흰색이라면")
+        class IsPieceColorWhite {
+            @Test
+            @DisplayName("기물의 흰색 표현을 반환한다")
+            void returnWhiteRepresentation() {
+                for (Type type : types) {
+                    char representation = PieceFactory.createNotBlank(Color.WHITE, type, new Position("a1"))
+                            .getRepresentation();
+                    assertThat(representation).isEqualTo(type.getWhiteRepresentation());
+                }
+            }
+        }
+
+        @Nested
+        @DisplayName("기물이 검은색이라면")
+        class IsPieceColorBlack {
+            @Test
+            @DisplayName("기물의 검은색 표현을 반환한다")
+            void returnBlackRepresentation() {
+                for (Type type : types) {
+                    char representation = PieceFactory.createNotBlank(Color.BLACK, type, new Position("a1"))
+                            .getRepresentation();
+                    assertThat(representation).isEqualTo(type.getBlackRepresentation());
+                }
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("isType method")
+    class IsType {
+        @Nested
+        @DisplayName("주어진 유형이 기물의 유형과 동일하다면")
+        class GivenTypeIsEqualToPieceType {
+            @Test
+            @DisplayName("true를 반환한다")
+            void returnTrue() {
+                for (Type type : types) {
+                    Piece piece = PieceFactory.createNotBlank(Color.WHITE, type, new Position("a1"));
+                    assertThat(piece.isType(type)).isTrue();
+                }
+            }
+        }
+
+        @Nested
+        @DisplayName("주어진 유형이 기물의 유형과 동일하지 않다면")
+        class GivenTypeIsNotEqualToPieceType {
+            @Test
+            @DisplayName("false를 반환한다")
+            void returnFalse() {
+                for (Type curType : types) {
+                    Piece piece = PieceFactory.createNotBlank(Color.WHITE, curType, new Position("a1"));
+                    for (Type checkType : types) {
+                        if (curType.equals(checkType)) {
+                            continue;
+                        }
+                        assertThat(piece.isType(checkType)).isFalse();
+                    }
+                }
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("changePosition method")
+    class ChangePosition {
+        @Test
+        @DisplayName("기물의 위치를 주어진 위치로 변경한다")
+        void changePiecePositionToGivenPosition() {
+            for (Color color : colors) {
+                for (Type type : types) {
+                    Piece piece = PieceFactory.createNotBlank(color, type, new Position("a1"));
+                    piece.changePosition(new Position("a2"));
+                    assertThat(piece.getPosition().getFileNum()).isEqualTo(0);
+                    assertThat(piece.getPosition().getRankNum()).isEqualTo(1);
+                }
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("getDefaultPoint method")
+    class GetDefaultPoint {
+        @Test
+        @DisplayName("기물의 유형에 맞는 기본 점수를 반환한다")
+        void returnPieceTypeDefaultPoint() {
+            for (Color color : colors) {
+                for (Type type : types) {
+                    Piece piece = PieceFactory.createNotBlank(color, type, new Position("a1"));
+                    assertThat(piece.getDefaultPoint()).isEqualTo(type.getDefaultPoint());
+                }
+            }
         }
     }
 }

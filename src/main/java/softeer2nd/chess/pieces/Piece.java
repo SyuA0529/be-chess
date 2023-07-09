@@ -1,7 +1,7 @@
 package softeer2nd.chess.pieces;
 
 import softeer2nd.chess.board.Board;
-import softeer2nd.chess.exception.CannotMovePosException;
+import softeer2nd.chess.exception.IllegalMovePositionException;
 
 import java.util.*;
 
@@ -38,6 +38,10 @@ public abstract class Piece implements Comparable<Piece>{
         return getColor().equals(color);
     }
 
+    public boolean isType(Type type) {
+        return getType().equals(type);
+    }
+
     public boolean isBlank() {
         return type.equals(Type.NO_PIECE);
     }
@@ -45,30 +49,36 @@ public abstract class Piece implements Comparable<Piece>{
     public List<Position> getMovePath(Position targetPos) {
         Direction direction = getMoveDirection(targetPos);
 
-        List<Position> positions = new ArrayList<>();
-        for (int i = 1; i < Board.SIDE_LENGTH; i++) {
+        List<Position> path = new ArrayList<>();
+        for (int moveCount = 1; moveCount < Board.SIDE_LENGTH; moveCount++) {
             Position curPos = new Position(
-                    getPosition().getRankNum() + direction.getYDegree() * i,
-                    getPosition().getColumnNum() + direction.getXDegree() * i);
-            if(curPos.equals(targetPos)) break;
-            positions.add(curPos);
+                    getPosition().getFileNum() + direction.getXDegree() * moveCount,
+                    getPosition().getRankNum() + direction.getYDegree() * moveCount);
+            if(curPos.equals(targetPos)) {
+                break;
+            }
+            path.add(curPos);
         }
-        return positions;
+        return path;
     }
 
     protected abstract List<Direction> getMovableDirection();
 
-    protected Direction getMoveDirection(Position targetPos) {
+    public Direction getMoveDirection(Position targetPos) {
         return getMovableDirection().stream()
-                .filter(d -> isDirectionEqual(targetPos, d))
+                .filter(d -> isMovablePositionByDirection(targetPos, d))
                 .findFirst()
-                .orElseThrow(CannotMovePosException::new);
+                .orElseThrow(IllegalMovePositionException::new);
     }
 
-    protected abstract boolean isDirectionEqual(Position position, Direction direction);
+    protected abstract boolean isMovablePositionByDirection(Position targetPos, Direction direction);
 
     public void changePosition(Position targetPos) {
         position.changePos(targetPos);
+    }
+
+    public double getDefaultPoint() {
+        return getType().getDefaultPoint();
     }
 
     @Override

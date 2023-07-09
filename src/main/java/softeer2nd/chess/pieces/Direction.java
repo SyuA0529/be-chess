@@ -62,5 +62,19 @@ public enum Direction {
     public static List<Direction> blackPawnDirection() {
         return Arrays.asList(SOUTH, SOUTHEAST, SOUTHWEST);
     }
-}
 
+    public static boolean isMoveDiagonal(Direction direction, int dx, int dy) {
+        return Math.abs(dx) == Math.abs(dy) && Math.abs(dx) > 0 &&
+                direction.getXDegree() == dx / Math.abs(dx) &&
+                direction.getYDegree() == dy / Math.abs(dy);
+    }
+
+    public static boolean isMoveLinear(Direction direction, int dx, int dy) {
+        return (dx == 0 && direction.getXDegree() == dx && direction.getYDegree() == dy / Math.abs(dy)) ||
+                (dy == 0 && direction.getXDegree() == dx / Math.abs(dx) && direction.getYDegree() == dy);
+    }
+
+    public static boolean isMoveOnceToDirection(Direction direction, int dx, int dy) {
+        return (dx == direction.getXDegree()) && (dy == direction.getYDegree());
+    }
+}

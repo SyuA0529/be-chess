@@ -13,11 +13,10 @@ public class Rook extends Piece {
     }
 
     @Override
-    protected boolean isDirectionEqual(Position targetPos, Direction direction) {
-        int dx = targetPos.getColumnDiff(targetPos);
-        int dy = targetPos.getRankDiff(targetPos);
+    protected boolean isMovablePositionByDirection(Position targetPos, Direction direction) {
+        int dx = targetPos.getFileDiff(getPosition());
+        int dy = targetPos.getRankDiff(getPosition());
 
-        return ((dx == 0 && direction.getXDegree() == dx && direction.getYDegree() == dy / Math.abs(dy)) ||
-                (dy == 0 && direction.getXDegree() == dx / Math.abs(dx) && direction.getYDegree() == dy));
+        return Direction.isMoveLinear(direction, dx, dy);
     }
 }

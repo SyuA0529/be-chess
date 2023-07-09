@@ -2,6 +2,8 @@ package softeer2nd.chess.pieces;
 
 import java.util.List;
 
+import static softeer2nd.chess.pieces.Direction.*;
+
 public class Knight extends Piece {
     public Knight(Color color, Position position) {
         super(color, Type.KNIGHT, position);
@@ -9,12 +11,11 @@ public class Knight extends Piece {
 
     @Override
     protected List<Direction> getMovableDirection() {
-        return Direction.knightDirection();
+        return knightDirection();
     }
 
     @Override
-    protected boolean isDirectionEqual(Position targetPos, Direction direction) {
-        return direction.getYDegree() == targetPos.getRankDiff(getPosition()) &&
-                direction.getYDegree() == targetPos.getColumnDiff(getPosition());
+    protected boolean isMovablePositionByDirection(Position targetPos, Direction direction) {
+        return isMoveOnceToDirection(direction, targetPos.getFileDiff(getPosition()), targetPos.getRankDiff(getPosition()));
     }
 }

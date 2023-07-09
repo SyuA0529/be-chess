@@ -22,15 +22,19 @@ public class Main {
             System.out.print("> ");
             String input = scanner.nextLine().trim();
 
-            if(input.equals(START_COMMAND)) board.initialize();
+            if(input.equals(START_COMMAND)) {
+                board.initialize();
+            }
 
             if(input.startsWith(MOVE_COMMAND)) {
                 String[] strings = input.split(" ");
                 chessGame.movePiece(new Position(strings[1]), new Position(strings[2]));
             }
 
-            if(input.equals(FINISH_COMMAND)) break;
-            System.out.println(chessView.showBoard());
+            if(input.equals(FINISH_COMMAND)) {
+                break;
+            }
+            chessView.showBoard();
         }
         scanner.close();
     }

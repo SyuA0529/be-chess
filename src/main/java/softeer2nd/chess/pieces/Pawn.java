@@ -1,9 +1,13 @@
 package softeer2nd.chess.pieces;
 
+
 import java.util.List;
+
+import static softeer2nd.chess.pieces.Direction.*;
 
 public class Pawn extends Piece {
     private boolean isFirstMove = true;
+
     protected Pawn(Color color, Position position) {
         super(color, Type.PAWN, position);
     }
@@ -16,17 +20,19 @@ public class Pawn extends Piece {
 
     @Override
     protected List<Direction> getMovableDirection() {
-        return isColor(Color.WHITE) ?
-                Direction.whitePawnDirection() : Direction.blackPawnDirection();
+        if (isColor(Color.WHITE)) return whitePawnDirection();
+        return blackPawnDirection();
     }
 
     @Override
-    protected boolean isDirectionEqual(Position targetPos, Direction direction) {
-        if(isFirstMove && direction.equals(isColor(Color.WHITE) ? Direction.NORTH : Direction.SOUTH)) {
-            return Math.abs(targetPos.getRankDiff(getPosition())) <= 2 && targetPos.getColumnDiff(targetPos) == 0;
+    protected boolean isMovablePositionByDirection(Position targetPos, Direction direction) {
+        if (isFirstMove) {
+            if ((isColor(Color.WHITE) && direction.equals(NORTH)) ||
+                    isColor(Color.BLACK) && direction.equals(SOUTH)) {
+                return Math.abs(targetPos.getRankDiff(getPosition())) <= 2 && targetPos.getFileDiff(getPosition()) == 0;
+            }
         }
 
-        return direction.getYDegree() == targetPos.getRankDiff(getPosition()) &&
-                direction.getYDegree() == targetPos.getColumnDiff(getPosition());
+        return isMoveOnceToDirection(direction, targetPos.getFileDiff(getPosition()), targetPos.getRankDiff(getPosition()));
     }
 }

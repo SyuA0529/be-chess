@@ -13,21 +13,10 @@ public class Queen extends Piece {
     }
 
     @Override
-    protected boolean isDirectionEqual(Position targetPos, Direction direction) {
-        int dx = targetPos.getColumnDiff(getPosition());
+    protected boolean isMovablePositionByDirection(Position targetPos, Direction direction) {
+        int dx = targetPos.getFileDiff(getPosition());
         int dy = targetPos.getRankDiff(getPosition());
 
-        return checkDiagonal(direction, dx, dy) || checkLinear(direction, dx, dy);
-    }
-
-    private static boolean checkLinear(Direction direction, int dx, int dy) {
-        return (dx == 0 && direction.getXDegree() == dx && direction.getYDegree() == dy / Math.abs(dy)) ||
-                (dy == 0 && direction.getXDegree() == dx / Math.abs(dx) && direction.getYDegree() == dy);
-    }
-
-    private static boolean checkDiagonal(Direction direction, int dx, int dy) {
-        return Math.abs(dx) == Math.abs(dy) && Math.abs(dx) > 1 &&
-                direction.getXDegree() == dx / Math.abs(dx) &&
-                direction.getYDegree() == dy / Math.abs(dy);
+        return Direction.isMoveDiagonal(direction, dx, dy) || Direction.isMoveLinear(direction, dx, dy);
     }
 }
