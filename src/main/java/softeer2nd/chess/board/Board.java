@@ -45,9 +45,9 @@ public class Board {
 
     public List<Piece> getPiecesInFileByColor(int fileNum, Color color) {
         List<Piece> pieces = new ArrayList<>();
-        for (int rankNum = 0; rankNum < SIDE_LENGTH; rankNum++){
+        for (int rankNum = 0; rankNum < SIDE_LENGTH; rankNum++) {
             Piece curPiece = board.get(rankNum).get(fileNum);
-            if(curPiece.isColor(color)){
+            if (curPiece.isColor(color)) {
                 pieces.add(board.get(rankNum).get(fileNum));
             }
         }

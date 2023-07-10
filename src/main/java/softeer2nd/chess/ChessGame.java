@@ -19,7 +19,7 @@ public class ChessGame {
     private final Board board;
 
     public ChessGame(Board board) {
-        this.turnColor =  Color.WHITE;
+        this.turnColor = Color.WHITE;
         this.board = board;
     }
 
@@ -56,14 +56,14 @@ public class ChessGame {
 
     private void changeTurn() {
         Color nextTurnColor = Color.WHITE;
-        if(this.turnColor.equals(Color.WHITE)) {
+        if (this.turnColor.equals(Color.WHITE)) {
             nextTurnColor = Color.BLACK;
         }
         this.turnColor = nextTurnColor;
     }
 
     private void verifyTurn(Position sourcePos) {
-        if(!board.findPiece(sourcePos).isColor(turnColor)) {
+        if (!board.findPiece(sourcePos).isColor(turnColor)) {
             throw new IllegalTurnException();
         }
     }
@@ -81,7 +81,7 @@ public class ChessGame {
         if (board.findPiece(targetPos).isColor(sourcePiece.getColor())) {
             throw new IllegalMovePositionException();
         }
-        if(sourcePiece.isType(Type.PAWN)) {
+        if (sourcePiece.isType(Type.PAWN)) {
             checkPawnMoveRule(targetPos, sourcePiece);
         }
     }
@@ -94,10 +94,10 @@ public class ChessGame {
 
     private void checkPawnMoveRule(Position targetPos, Piece sourcePiece) {
         Direction moveDirection = sourcePiece.getMoveDirection(targetPos);
-        if(Direction.linearDirection().contains(moveDirection)){
+        if (Direction.linearDirection().contains(moveDirection)) {
             checkPawnMoveLinearRule(targetPos);
         }
-        if(Direction.diagonalDirection().contains(moveDirection)) {
+        if (Direction.diagonalDirection().contains(moveDirection)) {
             checkPawnMoveDiagonalRule(targetPos, sourcePiece);
         }
     }
@@ -117,7 +117,7 @@ public class ChessGame {
 
     public static Color getEnemyColor(Piece sourcePiece) {
         Color enemyColor = Color.WHITE;
-        if(sourcePiece.isColor(Color.WHITE)) {
+        if (sourcePiece.isColor(Color.WHITE)) {
             enemyColor = Color.BLACK;
         }
         return enemyColor;

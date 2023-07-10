@@ -22,19 +22,22 @@ public class Main {
             System.out.print("> ");
             String input = scanner.nextLine().trim();
 
-            if(input.equals(START_COMMAND)) {
+            if (input.equals(START_COMMAND)) {
                 board.initialize();
             }
-
-            if(input.startsWith(MOVE_COMMAND)) {
+            if (input.startsWith(MOVE_COMMAND)) {
                 String[] strings = input.split(" ");
-                chessGame.movePiece(new Position(strings[1]), new Position(strings[2]));
+                try {
+                    chessGame.movePiece(new Position(strings[1]), new Position(strings[2]));
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
 
-            if(input.equals(FINISH_COMMAND)) {
+            if (input.equals(FINISH_COMMAND)) {
                 break;
             }
-            chessView.showBoard();
+            System.out.println(chessView.showBoard());
         }
         scanner.close();
     }

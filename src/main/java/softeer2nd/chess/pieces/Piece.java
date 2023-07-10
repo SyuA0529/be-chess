@@ -6,7 +6,7 @@ import softeer2nd.chess.exception.IllegalMovePositionException;
 import java.util.*;
 
 
-public abstract class Piece implements Comparable<Piece>{
+public abstract class Piece implements Comparable<Piece> {
     private final Color color;
     private final Type type;
     private final Position position;
@@ -30,7 +30,7 @@ public abstract class Piece implements Comparable<Piece>{
     }
 
     public char getRepresentation() {
-        if(color.equals(Color.BLACK)) return type.getBlackRepresentation();
+        if (color.equals(Color.BLACK)) return type.getBlackRepresentation();
         return type.getWhiteRepresentation();
     }
 
@@ -54,7 +54,7 @@ public abstract class Piece implements Comparable<Piece>{
             Position curPos = new Position(
                     getPosition().getFileNum() + direction.getXDegree() * moveCount,
                     getPosition().getRankNum() + direction.getYDegree() * moveCount);
-            if(curPos.equals(targetPos)) {
+            if (curPos.equals(targetPos)) {
                 break;
             }
             path.add(curPos);
