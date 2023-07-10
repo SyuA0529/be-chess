@@ -24,7 +24,7 @@ class ChessViewTest {
     @DisplayName("showBoard method")
     class ChessBoard {
         @Test
-        @DisplayName("현재 체스판을 출력한다")
+        @DisplayName("현재 체스판의 상태를 나타내는 문자열을 반환한다")
         void printChessBoardCorrect() {
             board.initialize();
 

@@ -8,7 +8,7 @@ import static softeer2nd.chess.pieces.Piece.*;
 public class PieceFactory {
     public static Piece createNotBlank(Color color, Type type, Position position) {
         switch (type) {
-            case KING :
+            case KING:
                 return new King(color, position);
             case QUEEN:
                 return new Queen(color, position);

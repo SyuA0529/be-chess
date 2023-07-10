@@ -1,5 +1,6 @@
 package softeer2nd.chess.board;
 
+import softeer2nd.chess.exception.MissingKingException;
 import softeer2nd.chess.pieces.Piece.Color;
 import softeer2nd.chess.pieces.Piece.Type;
 import softeer2nd.chess.pieces.Piece;
@@ -15,12 +16,13 @@ import static softeer2nd.chess.board.Board.SIDE_LENGTH;
 public class Rank {
     private final List<Piece> pieces = new ArrayList<>(SIDE_LENGTH);
 
-    private Rank() {}
+    private Rank() {
+    }
 
     public static Rank getEdgeRank(Color color) {
         Rank rank = new Rank();
         int rankNum = 0;
-        if(color.equals(Color.BLACK)) {
+        if (color.equals(Color.BLACK)) {
             rankNum = 7;
         }
 
@@ -34,7 +36,7 @@ public class Rank {
     public static Rank getPawnRank(Color color) {
         Rank rank = new Rank();
         int rankNum = 1;
-        if(color.equals(Color.BLACK)) {
+        if (color.equals(Color.BLACK)) {
             rankNum = 6;
         }
 
@@ -46,7 +48,7 @@ public class Rank {
 
     public static Rank getBlankRank(int rankNum) {
         Rank rank = new Rank();
-        for (int fileNum = 0; fileNum < SIDE_LENGTH; fileNum++){
+        for (int fileNum = 0; fileNum < SIDE_LENGTH; fileNum++) {
             rank.add(PieceFactory.createBlank(new Position(fileNum, rankNum)));
         }
         return rank;
@@ -76,7 +78,16 @@ public class Rank {
                 .count();
     }
 
-    public List<Piece> getPiecesByColor(Piece.Color color) {
+    public Position getKingPosition() {
+        for (Piece piece : pieces) {
+            if (piece.isType(Type.KING)) {
+                return piece.getPosition();
+            }
+        }
+        throw new MissingKingException();
+    }
+
+    public List<Piece> getPiecesByColor(Color color) {
         return pieces.stream()
                 .filter(p -> p.isColor(color))
                 .collect(Collectors.toList());
