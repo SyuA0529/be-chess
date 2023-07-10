@@ -1,6 +1,8 @@
 package softeer2nd.chess;
 
 import softeer2nd.chess.board.Board;
+import softeer2nd.chess.exception.CheckmateException;
+import softeer2nd.chess.exception.MoveBlankException;
 import softeer2nd.chess.exception.IllegalMovePositionException;
 import softeer2nd.chess.exception.IllegalTurnException;
 import softeer2nd.chess.pieces.Direction;
@@ -9,6 +11,7 @@ import softeer2nd.chess.pieces.Piece.Color;
 import softeer2nd.chess.pieces.Piece.Type;
 import softeer2nd.chess.pieces.Position;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -26,9 +29,9 @@ public class ChessGame {
     public void movePiece(Position sourcePos, Position targetPos) {
         Piece curPiece = board.findPiece(sourcePos);
 
-        verifyPathPositions(targetPos, curPiece);
-        verifyTargetPosition(targetPos, curPiece);
-        verifyTurn(sourcePos);
+        verifyMoveCondition(curPiece, targetPos, new ArrayList<>());
+        verifyTurn(curPiece.getPosition());
+        verifyCheckmate(curPiece, targetPos);
 
         curPiece.changePosition(targetPos);
         board.putPiece(targetPos, curPiece);
@@ -53,13 +56,48 @@ public class ChessGame {
         return point;
     }
 
-
     private void changeTurn() {
-        Color nextTurnColor = Color.WHITE;
-        if (this.turnColor.equals(Color.WHITE)) {
-            nextTurnColor = Color.BLACK;
+        this.turnColor = getEnemyColor();
+    }
+
+    private void verifyMoveCondition(Piece curPiece, Position targetPos, List<Position> ignorePositions) {
+        verifySourcePiece(curPiece, ignorePositions);
+        verifyTargetPosition(curPiece, targetPos);
+        verifyPathPositions(targetPos, curPiece, ignorePositions);
+    }
+
+    private void verifySourcePiece(Piece curPiece, List<Position> ignorePositions) {
+        if (curPiece.isBlank()) {
+            throw new MoveBlankException();
         }
-        this.turnColor = nextTurnColor;
+        if(ignorePositions.contains(curPiece.getPosition())) {
+            throw new IllegalMovePositionException();
+        }
+    }
+
+    private void verifyTargetPosition(Piece sourcePiece, Position targetPos) {
+        if (targetPos.equals(sourcePiece.getPosition())) {
+            throw new IllegalMovePositionException();
+        }
+        if (board.findPiece(targetPos).isColor(sourcePiece.getColor())) {
+            throw new IllegalMovePositionException();
+        }
+        if (sourcePiece.isType(Type.PAWN)) {
+            checkPawnMoveRule(sourcePiece, targetPos);
+        }
+    }
+
+    private void verifyPathPositions(Position targetPos, Piece sourcePiece, List<Position> ignorePositions) {
+        for (Position checkPosition : sourcePiece.getMovePath(targetPos)) {
+            verifyPathPosition(targetPos, checkPosition, ignorePositions);
+        }
+    }
+
+    private void verifyPathPosition(Position targetPos, Position checkPosition, List<Position> ignorePositions) {
+        if (!checkPosition.equals(targetPos) &&
+                (!board.findPiece(checkPosition).isBlank() || ignorePositions.contains(checkPosition))) {
+            throw new IllegalMovePositionException();
+        }
     }
 
     private void verifyTurn(Position sourcePos) {
@@ -68,42 +106,37 @@ public class ChessGame {
         }
     }
 
-    private void verifyPathPositions(Position targetPos, Piece sourcePiece) {
-        for (Position pos : sourcePiece.getMovePath(targetPos)) {
-            verifyPathPosition(targetPos, pos);
+    private void verifyCheckmate(Piece sourcePiece, Position targetPos) {
+        List<Position> ignorePositions = new ArrayList<>();
+        Position kingPosition = board.getKingPositionByColor(turnColor);
+        if(sourcePiece.isType(Type.KING)) {
+            kingPosition = targetPos;
+        } else {
+            ignorePositions.add(targetPos);
+        }
+
+        List<Piece> enemyPieces = board.getPiecesByColor(getEnemyColor());
+        for (Piece enemyPiece : enemyPieces) {
+            try {
+                verifyMoveCondition(enemyPiece, kingPosition, ignorePositions);
+                throw new CheckmateException();
+            } catch (IllegalMovePositionException ignored) {
+            }
         }
     }
 
-    private void verifyTargetPosition(Position targetPos, Piece sourcePiece) {
-        if (targetPos.equals(sourcePiece.getPosition())) {
-            throw new IllegalMovePositionException();
-        }
-        if (board.findPiece(targetPos).isColor(sourcePiece.getColor())) {
-            throw new IllegalMovePositionException();
-        }
-        if (sourcePiece.isType(Type.PAWN)) {
-            checkPawnMoveRule(targetPos, sourcePiece);
-        }
-    }
-
-    private void verifyPathPosition(Position targetPos, Position pos) {
-        if (!pos.equals(targetPos) && !board.findPiece(pos).isBlank()) {
-            throw new IllegalMovePositionException();
-        }
-    }
-
-    private void checkPawnMoveRule(Position targetPos, Piece sourcePiece) {
+    private void checkPawnMoveRule(Piece sourcePiece, Position targetPos) {
         Direction moveDirection = sourcePiece.getMoveDirection(targetPos);
         if (Direction.linearDirection().contains(moveDirection)) {
             checkPawnMoveLinearRule(targetPos);
         }
         if (Direction.diagonalDirection().contains(moveDirection)) {
-            checkPawnMoveDiagonalRule(targetPos, sourcePiece);
+            checkPawnMoveDiagonalRule(targetPos);
         }
     }
 
-    private void checkPawnMoveDiagonalRule(Position targetPos, Piece sourcePiece) {
-        Color enemyColor = getEnemyColor(sourcePiece);
+    private void checkPawnMoveDiagonalRule(Position targetPos) {
+        Color enemyColor = getEnemyColor();
         if (!board.findPiece(targetPos).isColor(enemyColor)) {
             throw new IllegalMovePositionException();
         }
@@ -115,9 +148,9 @@ public class ChessGame {
         }
     }
 
-    public static Color getEnemyColor(Piece sourcePiece) {
+    public Color getEnemyColor() {
         Color enemyColor = Color.WHITE;
-        if (sourcePiece.isColor(Color.WHITE)) {
+        if (turnColor.equals(Color.WHITE)) {
             enemyColor = Color.BLACK;
         }
         return enemyColor;

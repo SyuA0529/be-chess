@@ -1,6 +1,6 @@
 package softeer2nd.chess.pieces;
 
-import softeer2nd.chess.exception.IllegalMovePieceException;
+import softeer2nd.chess.exception.MoveBlankException;
 
 import java.util.List;
 
@@ -11,11 +11,11 @@ public class Blank extends Piece {
 
     @Override
     protected List<Direction> getMovableDirection() {
-        throw new IllegalMovePieceException();
+        throw new MoveBlankException();
     }
 
     @Override
     protected boolean isMovablePositionByDirection(Position targetPos, Direction direction) {
-        throw new IllegalMovePieceException();
+        throw new MoveBlankException();
     }
 }

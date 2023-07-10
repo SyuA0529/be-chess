@@ -3,8 +3,8 @@ package softeer2nd.utils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import softeer2nd.chess.exception.IllegalInputException;
 import softeer2nd.chess.exception.OutOfBoardException;
-import softeer2nd.chess.exception.WrongPositionException;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -52,7 +52,7 @@ class PositionUtilsTest {
                 String[] errorPoses = {"a1b1", "ab"};
                 for (String errorPose : errorPoses) {
                     assertThatThrownBy(() -> PositionUtils.getRankNumFromPosition(errorPose))
-                            .isInstanceOf(WrongPositionException.class);
+                            .isInstanceOf(IllegalInputException.class);
                 }
             }
         }
@@ -101,7 +101,7 @@ class PositionUtilsTest {
                 String[] errorPoses = {"a1b1", "13"};
                 for (String errorPose : errorPoses) {
                     assertThatThrownBy(() -> PositionUtils.getFileNumFromPosition(errorPose))
-                            .isInstanceOf(WrongPositionException.class);
+                            .isInstanceOf(IllegalInputException.class);
                 }
             }
         }

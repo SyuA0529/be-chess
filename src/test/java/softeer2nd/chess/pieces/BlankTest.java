@@ -3,7 +3,7 @@ package softeer2nd.chess.pieces;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import softeer2nd.chess.exception.IllegalMovePieceException;
+import softeer2nd.chess.exception.MoveBlankException;
 
 
 import static org.assertj.core.api.Assertions.*;
@@ -21,7 +21,7 @@ class BlankTest {
 
             //when
             //then
-            assertThatThrownBy(blank::getMovableDirection).isInstanceOf(IllegalMovePieceException.class);
+            assertThatThrownBy(blank::getMovableDirection).isInstanceOf(MoveBlankException.class);
         }
     }
 
@@ -35,7 +35,7 @@ class BlankTest {
             Blank blank = new Blank(new Position("a1"));
             //when
             //then
-            assertThatThrownBy(() -> blank.isMovablePositionByDirection(new Position("a2"), Direction.NNE)).isInstanceOf(IllegalMovePieceException.class);
+            assertThatThrownBy(() -> blank.isMovablePositionByDirection(new Position("a2"), Direction.NNE)).isInstanceOf(MoveBlankException.class);
         }
 
     }
@@ -52,7 +52,7 @@ class BlankTest {
             //when
             //then
             assertThatThrownBy(() -> blank.getMoveDirection(new Position("a2")))
-                    .isInstanceOf(IllegalMovePieceException.class);
+                    .isInstanceOf(MoveBlankException.class);
         }
     }
 
@@ -68,7 +68,7 @@ class BlankTest {
             //when
             //then
             assertThatThrownBy(() -> blank.getMovePath(new Position("a2")))
-                    .isInstanceOf(IllegalMovePieceException.class);
+                    .isInstanceOf(MoveBlankException.class);
         }
     }
 }

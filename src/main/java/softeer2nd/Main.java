@@ -11,34 +11,75 @@ public class Main {
     private static final String START_COMMAND = "start";
     private static final String FINISH_COMMAND = "end";
     private static final String MOVE_COMMAND = "move";
+    private static boolean started = false;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Board board = new Board();
         ChessGame chessGame = new ChessGame(board);
         ChessView chessView = new ChessView(board);
+        boolean isFinish = false;
 
-        while (true) {
+        while (!isFinish) {
             System.out.print("> ");
             String input = scanner.nextLine().trim();
+            String[] command = getCommand(input);
 
-            if (input.equals(START_COMMAND)) {
-                board.initialize();
+            switch (command[0]) {
+                case START_COMMAND:
+                    doStartCommand(board);
+                    break;
+                case MOVE_COMMAND:
+                    doMoveCommand(chessGame, command);
+                    break;
+                case FINISH_COMMAND:
+                    isFinish = true;
+                    break;
+                default:
+                    invalidCommand();
             }
-            if (input.startsWith(MOVE_COMMAND)) {
-                String[] strings = input.split(" ");
-                try {
-                    chessGame.movePiece(new Position(strings[1]), new Position(strings[2]));
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+            if(started) {
+                System.out.println(chessView.showBoard());
             }
-
-            if (input.equals(FINISH_COMMAND)) {
-                break;
-            }
-            System.out.println(chessView.showBoard());
         }
         scanner.close();
+    }
+
+
+    private static String[] getCommand(String input) {
+        return input.split(" ");
+    }
+
+    private static void doStartCommand(Board board) {
+        board.initialize();
+        started = true;
+    }
+
+    private static void doMoveCommand(ChessGame chessGame, String[] command) {
+        if(!checkCanMoveCommand(command)) {
+            return;
+        }
+        try {
+            chessGame.movePiece(new Position(command[1]), new Position(command[2]));
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static boolean checkCanMoveCommand(String[] command) {
+        if(!started) {
+            System.out.println("체스가 시작되지 않았습니다");
+            return false;
+        }
+
+        if(command.length != 3) {
+            System.out.println("move 명령어의 인수가 너무 많습니다");
+            return false;
+        }
+        return true;
+    }
+
+    private static void invalidCommand() {
+        System.out.println("해석할 수 없는 명령입니다.");
     }
 }
