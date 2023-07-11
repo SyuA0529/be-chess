@@ -69,7 +69,7 @@ public class ChessGame {
         if (targetPos.equals(sourcePiece.getPosition())) {
             throw new IllegalMovePositionException();
         }
-        if (board.checkPositionColor(targetPos, sourcePiece.getColor())) {
+        if (board.findPiece(targetPos).isColor(sourcePiece.getColor())) {
             throw new IllegalMovePositionException();
         }
         if (sourcePiece.isType(Type.PAWN)) {
@@ -85,7 +85,7 @@ public class ChessGame {
 
     private void verifyPositionColor(Position checkPosition, Color color,
                                      Supplier<? extends ChessException> exceptionSupplier) {
-        if (!board.checkPositionColor(checkPosition, color)) {
+        if (!board.findPiece(checkPosition).isColor(color)) {
             throw exceptionSupplier.get();
         }
     }
@@ -114,12 +114,10 @@ public class ChessGame {
     private void verifyEnemyAttackKing(Piece sourcePiece, Position afterMovePosition,
                                        Position kingPosition, Piece enemyPiece) {
         for (Position enemyMovePosition : enemyPiece.getMovePath(kingPosition)) {
-            //이동하는 경로에 장애물이 있을 때 기존에는 존재했으나 사라졌다면
-            if (!board.checkPositionColor(enemyMovePosition, Color.NOCOLOR) && sourcePiece.isPosition(enemyMovePosition)) {
+            if (!board.findPiece(enemyMovePosition).isColor(Color.NOCOLOR) && sourcePiece.isPosition(enemyMovePosition)) {
                 continue;
             }
-            //기존에는 장애물이 존재하지 않았으나 생겼다면
-            if (board.checkPositionColor(enemyMovePosition, Color.NOCOLOR) && afterMovePosition.equals(enemyMovePosition)) {
+            if (board.findPiece(enemyMovePosition).isColor(Color.NOCOLOR) && afterMovePosition.equals(enemyMovePosition)) {
                 throw new IllegalMovePositionException();
             }
             verifyPositionColor(enemyMovePosition, Color.NOCOLOR, IllegalMovePositionException::new);
