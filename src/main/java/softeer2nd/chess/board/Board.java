@@ -91,10 +91,6 @@ public class Board {
         return pieces;
     }
 
-    public boolean checkPositionColor(Position position, Color color) {
-        return findPiece(position).isColor(color);
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
