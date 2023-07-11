@@ -15,11 +15,5 @@ class PositionTest {
             assertThatThrownBy(() -> new Position(errorPose))
                     .isInstanceOf(OutOfBoardException.class);
         }
-
-        Position notErrorPos = new Position("a1");
-        for (String errorPose : errorPoses) {
-            assertThatThrownBy(() -> notErrorPos.changePos(new Position(errorPose)))
-                    .isInstanceOf(OutOfBoardException.class);
-        }
     }
 }

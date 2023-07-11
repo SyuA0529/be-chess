@@ -14,9 +14,7 @@ public class Rook extends Piece {
 
     @Override
     protected boolean isMovablePositionByDirection(Position targetPos, Direction direction) {
-        int dx = targetPos.getFileDiff(getPosition());
-        int dy = targetPos.getRankDiff(getPosition());
-
-        return Direction.isMoveLinear(direction, dx, dy);
+        return Direction.isMoveLinear(direction,
+                targetPos.getFileDiff(getPosition()), targetPos.getRankDiff(getPosition()));
     }
 }

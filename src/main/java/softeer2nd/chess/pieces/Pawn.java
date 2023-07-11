@@ -26,12 +26,14 @@ public class Pawn extends Piece {
 
     @Override
     protected boolean isMovablePositionByDirection(Position targetPos, Direction direction) {
+        int dx = targetPos.getFileDiff(getPosition());
+        int dy = targetPos.getRankDiff(getPosition());
         if (isFirstMove) {
-            if (Direction.isMoveLinear(direction, targetPos.getFileDiff(getPosition()), targetPos.getRankDiff(getPosition()))) {
+            if (Direction.isMoveLinear(direction, dx, dy)) {
                 return Math.abs(targetPos.getRankDiff(getPosition())) <= 2;
             }
         }
 
-        return isMoveOnceToDirection(direction, targetPos.getFileDiff(getPosition()), targetPos.getRankDiff(getPosition()));
+        return isMoveOnceToDirection(direction, dx, dy);
     }
 }

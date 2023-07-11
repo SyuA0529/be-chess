@@ -166,48 +166,100 @@ public class BoardTest {
     @Nested
     @DisplayName("getSortedColorPiecesByPoint method")
     class GetSortedColorPiecesByPoint {
-        @Test
-        @DisplayName("흰색 기물들을 점수를 기준으로 내림차순 정렬")
-        void sortWhitePieceByPointDecrease() {
-            //given
-            board.initialize();
+        @Nested
+        @DisplayName("내림 차순인 경우")
+        class IsDesc {
+            @Test
+            @DisplayName("흰색 기물들을 점수를 기준으로 내림차순 정렬")
+            void sortWhitePieceByPointDecrease() {
+                //given
+                board.initialize();
 
-            //when
-            List<Piece> whitePieces = board.getSortedPiecesByPointAndColor(Color.WHITE);
+                //when
+                List<Piece> whitePieces = board.getSortedPiecesByPointAndColor(Color.WHITE, false);
 
-            //then
-            assertThat(whitePieces.get(0).getType()).isEqualTo(Type.QUEEN);
-            for (int i = 0; i < 2; i++)
-                assertThat(whitePieces.get(1 + i).getType()).isEqualTo(Type.ROOK);
-            for (int i = 0; i < 2; i++)
-                assertThat(whitePieces.get(3 + i).getType()).isEqualTo(Type.BISHOP);
-            for (int i = 0; i < 2; i++)
-                assertThat(whitePieces.get(5 + i).getType()).isEqualTo(Type.KNIGHT);
-            for (int i = 0; i < 8; i++)
-                assertThat(whitePieces.get(7 + i).getType()).isEqualTo(Type.PAWN);
-            assertThat(whitePieces.get(whitePieces.size() - 1).getType()).isEqualTo(Type.KING);
+                //then
+                assertThat(whitePieces.get(0).getType()).isEqualTo(Type.QUEEN);
+                for (int i = 0; i < 2; i++)
+                    assertThat(whitePieces.get(1 + i).getType()).isEqualTo(Type.ROOK);
+                for (int i = 0; i < 2; i++)
+                    assertThat(whitePieces.get(3 + i).getType()).isEqualTo(Type.BISHOP);
+                for (int i = 0; i < 2; i++)
+                    assertThat(whitePieces.get(5 + i).getType()).isEqualTo(Type.KNIGHT);
+                for (int i = 0; i < 8; i++)
+                    assertThat(whitePieces.get(7 + i).getType()).isEqualTo(Type.PAWN);
+                assertThat(whitePieces.get(whitePieces.size() - 1).getType()).isEqualTo(Type.KING);
+            }
+
+            @Test
+            @DisplayName("검은색 기물들을 점수를 기준으로 내림차순 정렬")
+            void sortBlackPieceByPointDecrease() {
+                //given
+                board.initialize();
+
+                //when
+                List<Piece> blackPieces = board.getSortedPiecesByPointAndColor(Color.BLACK, false);
+
+                //then
+                assertThat(blackPieces.get(0).getType()).isEqualTo(Type.QUEEN);
+                for (int i = 0; i < 2; i++)
+                    assertThat(blackPieces.get(1 + i).getType()).isEqualTo(Type.ROOK);
+                for (int i = 0; i < 2; i++)
+                    assertThat(blackPieces.get(3 + i).getType()).isEqualTo(Type.BISHOP);
+                for (int i = 0; i < 2; i++)
+                    assertThat(blackPieces.get(5 + i).getType()).isEqualTo(Type.KNIGHT);
+                for (int i = 0; i < 8; i++)
+                    assertThat(blackPieces.get(7 + i).getType()).isEqualTo(Type.PAWN);
+                assertThat(blackPieces.get(blackPieces.size() - 1).getType()).isEqualTo(Type.KING);
+            }
         }
 
-        @Test
-        @DisplayName("검은색 기물들을 점수를 기준으로 내림차순 정렬")
-        void sortBlackPieceByPointDecrease() {
-            //given
-            board.initialize();
+        @Nested
+        @DisplayName("오름차순인 경우")
+        class IsAsc {
+            @Test
+            @DisplayName("흰색 기물들을 점수를 기준으로 오름차순 정렬")
+            void sortWhitePieceByPointAsc() {
+                //given
+                board.initialize();
 
-            //when
-            List<Piece> blackPieces = board.getSortedPiecesByPointAndColor(Color.BLACK);
+                //when
+                List<Piece> whitePieces = board.getSortedPiecesByPointAndColor(Color.WHITE, true);
 
-            //then
-            assertThat(blackPieces.get(0).getType()).isEqualTo(Type.QUEEN);
-            for (int i = 0; i < 2; i++)
-                assertThat(blackPieces.get(1 + i).getType()).isEqualTo(Type.ROOK);
-            for (int i = 0; i < 2; i++)
-                assertThat(blackPieces.get(3 + i).getType()).isEqualTo(Type.BISHOP);
-            for (int i = 0; i < 2; i++)
-                assertThat(blackPieces.get(5 + i).getType()).isEqualTo(Type.KNIGHT);
-            for (int i = 0; i < 8; i++)
-                assertThat(blackPieces.get(7 + i).getType()).isEqualTo(Type.PAWN);
-            assertThat(blackPieces.get(blackPieces.size() - 1).getType()).isEqualTo(Type.KING);
+                //then
+                assertThat(whitePieces.get(0).getType()).isEqualTo(Type.KING);
+                for (int i = 0; i < 8; i++)
+                    assertThat(whitePieces.get(1 + i).getType()).isEqualTo(Type.PAWN);
+                for (int i = 0; i < 2; i++)
+                    assertThat(whitePieces.get(9 + i).getType()).isEqualTo(Type.KNIGHT);
+                for (int i = 0; i < 2; i++)
+                    assertThat(whitePieces.get(11 + i).getType()).isEqualTo(Type.BISHOP);
+                for (int i = 0; i < 2; i++)
+                    assertThat(whitePieces.get(13 + i).getType()).isEqualTo(Type.ROOK);
+                assertThat(whitePieces.get(whitePieces.size() - 1).getType()).isEqualTo(Type.QUEEN);
+            }
+
+            @Test
+            @DisplayName("검은색 기물들을 점수를 기준으로 오름차순 정렬")
+            void sortBlackPieceByPointAsc() {
+                //given
+                board.initialize();
+
+                //when
+                List<Piece> blackPieces = board.getSortedPiecesByPointAndColor(Color.BLACK, true);
+
+                //then
+                assertThat(blackPieces.get(0).getType()).isEqualTo(Type.KING);
+                for (int i = 0; i < 8; i++)
+                    assertThat(blackPieces.get(1 + i).getType()).isEqualTo(Type.PAWN);
+                for (int i = 0; i < 2; i++)
+                    assertThat(blackPieces.get(9 + i).getType()).isEqualTo(Type.KNIGHT);
+                for (int i = 0; i < 2; i++)
+                    assertThat(blackPieces.get(11 + i).getType()).isEqualTo(Type.BISHOP);
+                for (int i = 0; i < 2; i++)
+                    assertThat(blackPieces.get(13 + i).getType()).isEqualTo(Type.ROOK);
+                assertThat(blackPieces.get(blackPieces.size() - 1).getType()).isEqualTo(Type.QUEEN);
+            }
         }
     }
 

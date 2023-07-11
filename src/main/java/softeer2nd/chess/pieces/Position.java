@@ -5,8 +5,8 @@ import java.util.Objects;
 import static softeer2nd.utils.PositionUtils.*;
 
 public class Position {
-    private int rankNum;
-    private int fileNum;
+    private final int rankNum;
+    private final int fileNum;
 
     public Position(String pos) {
         this(getFileNumFromPosition(pos), getRankNumFromPosition(pos));
@@ -18,11 +18,6 @@ public class Position {
 
         verifyNumberInBoard(rankNum);
         this.rankNum = rankNum;
-    }
-
-    public void changePos(Position targetPos) {
-        this.rankNum = targetPos.getRankNum();
-        this.fileNum = targetPos.getFileNum();
     }
 
     public int getRankNum() {

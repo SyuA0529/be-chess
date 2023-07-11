@@ -16,6 +16,8 @@ public class King extends Piece {
 
     @Override
     protected boolean isMovablePositionByDirection(Position targetPos, Direction direction) {
-        return isMoveOnceToDirection(direction, targetPos.getFileDiff(getPosition()), targetPos.getRankDiff(getPosition()));
+        return isMoveOnceToDirection(direction,
+                targetPos.getFileDiff(getPosition()),
+                targetPos.getRankDiff(getPosition()));
     }
 }

@@ -9,7 +9,7 @@ import java.util.*;
 public abstract class Piece implements Comparable<Piece> {
     private final Color color;
     private final Type type;
-    private final Position position;
+    private Position position;
 
     protected Piece(Color color, Type type, Position position) {
         this.color = color;
@@ -32,6 +32,10 @@ public abstract class Piece implements Comparable<Piece> {
     public char getRepresentation() {
         if (color.equals(Color.BLACK)) return type.getBlackRepresentation();
         return type.getWhiteRepresentation();
+    }
+
+    public boolean isPosition(Position position) {
+        return getPosition().equals(position);
     }
 
     public boolean isColor(Color color) {
@@ -74,7 +78,7 @@ public abstract class Piece implements Comparable<Piece> {
     protected abstract boolean isMovablePositionByDirection(Position targetPos, Direction direction);
 
     public void changePosition(Position targetPos) {
-        position.changePos(targetPos);
+        this.position = targetPos;
     }
 
     public double getDefaultPoint() {

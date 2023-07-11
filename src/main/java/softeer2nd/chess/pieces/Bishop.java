@@ -16,9 +16,9 @@ public class Bishop extends Piece {
 
     @Override
     protected boolean isMovablePositionByDirection(Position targetPos, Direction direction) {
-        int dx = targetPos.getFileDiff(getPosition());
-        int dy = targetPos.getRankDiff(getPosition());
 
-        return isMoveDiagonal(direction, dx, dy);
+        return isMoveDiagonal(direction,
+                targetPos.getFileDiff(getPosition()),
+                targetPos.getRankDiff(getPosition()));
     }
 }
