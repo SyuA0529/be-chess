@@ -155,16 +155,20 @@ class ChessGameTest {
                             @DisplayName("기물을 움직였을 때 체크메이트라면")
                             class IsCheckmateWhenMove {
                                 @Test
-                                @DisplayName("IllegalMovePositionException이 발생한다")
+                                @DisplayName("CheckmateException이 발생한다")
                                 void throwIllegalMovePositionException() {
                                     //given
                                     board.initializeEmpty();
                                     addPiece(Color.WHITE, Type.KING, "a1");
+                                    addPiece(Color.WHITE, Type.QUEEN, "a2");
+                                    addPiece(Color.BLACK, Type.ROOK, "a3");
                                     addPiece(Color.BLACK, Type.ROOK, "b2");
 
                                     //when
                                     //then
-                                    assertThatThrownBy(() -> chessGame.movePiece(new Position("a1"), new Position("a2")))
+                                    assertThatThrownBy(() -> chessGame.movePiece(new Position("a1"), new Position("b1")))
+                                            .isInstanceOf(CheckmateException.class);
+                                    assertThatThrownBy(() -> chessGame.movePiece(new Position("a2"), new Position("b3")))
                                             .isInstanceOf(CheckmateException.class);
                                 }
                             }
