@@ -296,7 +296,6 @@ class ChessGameTest {
                                             @Test
                                             @DisplayName("IllegalMovePositionException이 발생한다")
                                             void throwIllegalMovePositionException() {
-
                                                 //given
                                                 board.initializeEmpty();
                                                 addPiece(Color.WHITE, Type.PAWN, "a1");

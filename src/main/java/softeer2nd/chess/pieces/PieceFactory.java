@@ -6,6 +6,9 @@ import softeer2nd.chess.exception.IllegalCreatePieceException;
 import static softeer2nd.chess.pieces.Piece.*;
 
 public class PieceFactory {
+    private PieceFactory() {
+    }
+
     public static Piece createNotBlank(Color color, Type type, Position position) {
         switch (type) {
             case KING:

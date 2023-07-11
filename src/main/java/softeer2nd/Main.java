@@ -38,7 +38,7 @@ public class Main {
                 default:
                     invalidCommand();
             }
-            if(started) {
+            if (started) {
                 System.out.println(chessView.showBoard());
             }
         }
@@ -56,7 +56,7 @@ public class Main {
     }
 
     private static void doMoveCommand(ChessGame chessGame, String[] command) {
-        if(!checkCanMoveCommand(command)) {
+        if (!checkCanMoveCommand(command)) {
             return;
         }
         try {
@@ -67,12 +67,12 @@ public class Main {
     }
 
     private static boolean checkCanMoveCommand(String[] command) {
-        if(!started) {
+        if (!started) {
             System.out.println("체스가 시작되지 않았습니다");
             return false;
         }
 
-        if(command.length != 3) {
+        if (command.length != 3) {
             System.out.println("move 명령어의 인수가 너무 많습니다");
             return false;
         }

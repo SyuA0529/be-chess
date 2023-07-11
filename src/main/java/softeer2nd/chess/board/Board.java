@@ -8,7 +8,7 @@ import softeer2nd.chess.pieces.Position;
 
 import java.util.*;
 
-import static softeer2nd.utils.StringUtils.appendNewLine;
+import static softeer2nd.utils.StringUtils.*;
 
 public class Board {
     public static final int SIDE_LENGTH = 8;
@@ -57,7 +57,7 @@ public class Board {
         for (int rankNum = 0; rankNum < SIDE_LENGTH; rankNum++) {
             Piece curPiece = ranks.get(rankNum).get(fileNum);
             if (curPiece.isColor(color)) {
-                pieces.add(ranks.get(rankNum).get(fileNum));
+                pieces.add(curPiece);
             }
         }
         return pieces;
@@ -81,11 +81,18 @@ public class Board {
                 .sum();
     }
 
-    public List<Piece> getSortedPiecesByPointAndColor(Color color) {
+    public List<Piece> getSortedPiecesByPointAndColor(Color color, boolean asc) {
         List<Piece> pieces = new ArrayList<>();
         ranks.forEach(r -> pieces.addAll(r.getPiecesByColor(color)));
         pieces.sort(Comparator.reverseOrder());
+        if (asc) {
+            Collections.reverse(pieces);
+        }
         return pieces;
+    }
+
+    public boolean checkPositionColor(Position position, Color color) {
+        return findPiece(position).isColor(color);
     }
 
     @Override

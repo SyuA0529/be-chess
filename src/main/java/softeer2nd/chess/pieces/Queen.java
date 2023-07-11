@@ -3,7 +3,7 @@ package softeer2nd.chess.pieces;
 import java.util.List;
 
 public class Queen extends Piece {
-    public Queen(Color color, Position position) {
+    protected Queen(Color color, Position position) {
         super(color, Type.QUEEN, position);
     }
 

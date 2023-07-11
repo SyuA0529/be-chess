@@ -15,7 +15,7 @@ class BishopTest {
     @DisplayName("getMovableDirection method ")
     class GetMovableDirection {
         @Test
-        @DisplayName("대각선 방향을 반환해야 한다")
+        @DisplayName("대각선 방향을 반환 한다")
         void returnDiagonalDirection() {
             //given
             Bishop bishop = new Bishop(Piece.Color.WHITE, new Position("a1"));
