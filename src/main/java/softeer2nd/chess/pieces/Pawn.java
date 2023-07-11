@@ -27,9 +27,8 @@ public class Pawn extends Piece {
     @Override
     protected boolean isMovablePositionByDirection(Position targetPos, Direction direction) {
         if (isFirstMove) {
-            if ((isColor(Color.WHITE) && direction.equals(NORTH)) ||
-                    isColor(Color.BLACK) && direction.equals(SOUTH)) {
-                return Math.abs(targetPos.getRankDiff(getPosition())) <= 2 && targetPos.getFileDiff(getPosition()) == 0;
+            if (Direction.isMoveLinear(direction, targetPos.getFileDiff(getPosition()), targetPos.getRankDiff(getPosition()))) {
+                return Math.abs(targetPos.getRankDiff(getPosition())) <= 2;
             }
         }
 

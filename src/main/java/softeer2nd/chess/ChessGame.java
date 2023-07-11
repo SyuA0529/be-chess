@@ -11,7 +11,6 @@ import softeer2nd.chess.pieces.Piece.Color;
 import softeer2nd.chess.pieces.Piece.Type;
 import softeer2nd.chess.pieces.Position;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -27,14 +26,14 @@ public class ChessGame {
     }
 
     public void movePiece(Position sourcePos, Position targetPos) {
-        Piece curPiece = board.findPiece(sourcePos);
+        Piece sourcePiece = board.findPiece(sourcePos);
 
-        verifyMoveCondition(curPiece, targetPos, new ArrayList<>());
-        verifyTurn(curPiece.getPosition());
-        verifyCheckmate(curPiece, targetPos);
+        verifyMoveCondition(sourcePiece, targetPos);
+        verifyTurn(sourcePiece.getPosition());
+        verifyCheckmate(sourcePiece, targetPos);
 
-        curPiece.changePosition(targetPos);
-        board.putPiece(targetPos, curPiece);
+        sourcePiece.changePosition(targetPos);
+        board.putPiece(targetPos, sourcePiece);
         board.putPiece(sourcePos, createBlank(sourcePos));
         changeTurn();
     }
@@ -60,18 +59,15 @@ public class ChessGame {
         this.turnColor = getEnemyColor();
     }
 
-    private void verifyMoveCondition(Piece curPiece, Position targetPos, List<Position> ignorePositions) {
-        verifySourcePiece(curPiece, ignorePositions);
+    private void verifyMoveCondition(Piece curPiece, Position targetPos) {
+        verifySourcePiece(curPiece);
         verifyTargetPosition(curPiece, targetPos);
-        verifyPathPositions(targetPos, curPiece, ignorePositions);
+        verifyPathPositions(targetPos, curPiece);
     }
 
-    private void verifySourcePiece(Piece curPiece, List<Position> ignorePositions) {
+    private void verifySourcePiece(Piece curPiece) {
         if (curPiece.isBlank()) {
             throw new MoveBlankException();
-        }
-        if(ignorePositions.contains(curPiece.getPosition())) {
-            throw new IllegalMovePositionException();
         }
     }
 
@@ -87,15 +83,14 @@ public class ChessGame {
         }
     }
 
-    private void verifyPathPositions(Position targetPos, Piece sourcePiece, List<Position> ignorePositions) {
+    private void verifyPathPositions(Position targetPos, Piece sourcePiece) {
         for (Position checkPosition : sourcePiece.getMovePath(targetPos)) {
-            verifyPathPosition(targetPos, checkPosition, ignorePositions);
+            verifyPathPosition(checkPosition);
         }
     }
 
-    private void verifyPathPosition(Position targetPos, Position checkPosition, List<Position> ignorePositions) {
-        if (!checkPosition.equals(targetPos) &&
-                (!board.findPiece(checkPosition).isBlank() || ignorePositions.contains(checkPosition))) {
+    private void verifyPathPosition(Position checkPosition) {
+        if (!board.findPiece(checkPosition).isBlank()) {
             throw new IllegalMovePositionException();
         }
     }
@@ -106,23 +101,40 @@ public class ChessGame {
         }
     }
 
-    private void verifyCheckmate(Piece sourcePiece, Position targetPos) {
-        List<Position> ignorePositions = new ArrayList<>();
-        Position kingPosition = board.getKingPositionByColor(turnColor);
-        if(sourcePiece.isType(Type.KING)) {
-            kingPosition = targetPos;
-        } else {
-            ignorePositions.add(targetPos);
-        }
-
-        List<Piece> enemyPieces = board.getPiecesByColor(getEnemyColor());
-        for (Piece enemyPiece : enemyPieces) {
+    private void verifyCheckmate(Piece sourcePiece, Position afterMovePosition) {
+        Position kingPosition = getKingPosition(sourcePiece, afterMovePosition);
+        for (Piece enemyPiece : board.getPiecesByColor(getEnemyColor())) {
             try {
-                verifyMoveCondition(enemyPiece, kingPosition, ignorePositions);
-                throw new CheckmateException();
+                if(enemyPiece.getPosition().equals(afterMovePosition)) {
+                    continue;
+                }
+                verifyEnemyAttackKing(sourcePiece, afterMovePosition, kingPosition, enemyPiece);
             } catch (IllegalMovePositionException ignored) {
             }
         }
+    }
+
+    private Position getKingPosition(Piece sourcePiece, Position afterMovePosition) {
+        Position kingPosition = board.getKingPositionByColor(turnColor);
+        if (sourcePiece.isType(Type.KING)) {
+            kingPosition = afterMovePosition;
+        }
+        return kingPosition;
+    }
+
+    private void verifyEnemyAttackKing(Piece sourcePiece, Position afterMovePosition, Position kingPosition, Piece enemyPiece) {
+        for (Position enemyMovePosition : enemyPiece.getMovePath(kingPosition)) {
+            //이동하는 경로에 장애물이 있을 때 기존에는 존재했으나 사라졌다면
+            if(!board.findPiece(enemyMovePosition).isBlank() && sourcePiece.getPosition().equals(enemyMovePosition)) {
+                continue;
+            }
+            //기존에는 장애물이 존재하지 않았으나 생겼다면
+            if(board.findPiece(enemyMovePosition).isBlank() && afterMovePosition.equals(enemyMovePosition)) {
+                throw new IllegalMovePositionException();
+            }
+            verifyPathPosition(enemyMovePosition);
+        }
+        throw new CheckmateException();
     }
 
     private void checkPawnMoveRule(Piece sourcePiece, Position targetPos) {
@@ -143,9 +155,7 @@ public class ChessGame {
     }
 
     private void checkPawnMoveLinearRule(Position targetPos) {
-        if (!board.findPiece(targetPos).isBlank()) {
-            throw new IllegalMovePositionException();
-        }
+        verifyPathPosition(targetPos);
     }
 
     public Color getEnemyColor() {

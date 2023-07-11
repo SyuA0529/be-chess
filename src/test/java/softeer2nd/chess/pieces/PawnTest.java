@@ -62,75 +62,98 @@ class PawnTest {
     @DisplayName("isMoveDirection method")
     class IsMoveDirection {
         @Nested
-        @DisplayName("앞으로 움직인다면")
+        @DisplayName("직선으로 움직인다면")
         class IfMoveFront {
             @Nested
-            @DisplayName("처음 움직인다면")
-            class IsFirstMove {
+            @DisplayName("갈 수 있는 방향이 아니라면")
+            class CannotMoveToDirection {
                 @Test
-                @DisplayName("두 칸 까지 움직일 수 있다")
-                void canMoveTwoSpace() {
+                @DisplayName("IllegalMovePositionException이 발생한다")
+                void throwIllegalMovePositionException() {
                     //given
-                    Pawn whitePawn = new Pawn(Piece.Color.WHITE, new Position("a1"));
-                    Pawn blackPawn = new Pawn(Piece.Color.BLACK, new Position("a8"));
+                    Pawn whitePawn = new Pawn(Piece.Color.WHITE, new Position("a2"));
+                    Pawn blackPawn = new Pawn(Piece.Color.BLACK, new Position("a7"));
 
                     //when
                     //then
-                    assertThat(whitePawn.isMovablePositionByDirection(new Position("a2"), Direction.NORTH)).isTrue();
-                    assertThat(whitePawn.isMovablePositionByDirection(new Position("a3"), Direction.NORTH)).isTrue();
-                    assertThat(blackPawn.isMovablePositionByDirection(new Position("a7"), Direction.SOUTH)).isTrue();
-                    assertThat(blackPawn.isMovablePositionByDirection(new Position("a6"), Direction.SOUTH)).isTrue();
-                }
-
-                @Test
-                @DisplayName("두 칸 넘게 움직일 수 없다")
-                void cannotMoveMoreTwoSpace() {
-                    //given
-                    Pawn whitePawn = new Pawn(Piece.Color.WHITE, new Position("a1"));
-                    Pawn blackPawn = new Pawn(Piece.Color.BLACK, new Position("a8"));
-
-                    //when
-                    //then
-                    assertThat(whitePawn.isMovablePositionByDirection(new Position("a4"), Direction.NORTH)).isFalse();
-                    assertThat(blackPawn.isMovablePositionByDirection(new Position("a5"), Direction.NORTH)).isFalse();
+                    assertThatThrownBy(() -> whitePawn.getMoveDirection(new Position("a1")))
+                            .isInstanceOf(IllegalMovePositionException.class);
+                    assertThatThrownBy(() -> blackPawn.getMoveDirection(new Position("a8")))
+                            .isInstanceOf(IllegalMovePositionException.class);
                 }
             }
 
             @Nested
-            @DisplayName("처음 움직이는게 아니라면")
-            class IsNotFirstMove {
-                @Test
-                @DisplayName("한 칸 움직일 수 있다")
-                void canMoveOneSpace() {
-                    //given
-                    Pawn whitePawn = new Pawn(Piece.Color.WHITE, new Position("a1"));
-                    Pawn blackPawn = new Pawn(Piece.Color.BLACK, new Position("a8"));
+            @DisplayName("갈 수 있는 방향이라면")
+            class CanMoveToDirection {
+                @Nested
+                @DisplayName("처음 움직인다면")
+                class IsFirstMove {
+                    @Test
+                    @DisplayName("두 칸 까지 움직일 수 있다")
+                    void canMoveTwoSpace() {
+                        //given
+                        Pawn whitePawn = new Pawn(Piece.Color.WHITE, new Position("a1"));
+                        Pawn blackPawn = new Pawn(Piece.Color.BLACK, new Position("a8"));
 
-                    //when
-                    whitePawn.changePosition(new Position("a1"));
-                    blackPawn.changePosition(new Position("a8"));
+                        //when
+                        //then
+                        assertThat(whitePawn.isMovablePositionByDirection(new Position("a2"), Direction.NORTH)).isTrue();
+                        assertThat(whitePawn.isMovablePositionByDirection(new Position("a3"), Direction.NORTH)).isTrue();
+                        assertThat(blackPawn.isMovablePositionByDirection(new Position("a7"), Direction.SOUTH)).isTrue();
+                        assertThat(blackPawn.isMovablePositionByDirection(new Position("a6"), Direction.SOUTH)).isTrue();
+                    }
 
-                    //then
-                    assertThat(whitePawn.isMovablePositionByDirection(new Position("a2"), Direction.NORTH)).isTrue();
-                    assertThat(blackPawn.isMovablePositionByDirection(new Position("a7"), Direction.SOUTH)).isTrue();
+                    @Test
+                    @DisplayName("두 칸 넘게 움직일 수 없다")
+                    void cannotMoveMoreTwoSpace() {
+                        //given
+                        Pawn whitePawn = new Pawn(Piece.Color.WHITE, new Position("a1"));
+                        Pawn blackPawn = new Pawn(Piece.Color.BLACK, new Position("a8"));
+
+                        //when
+                        //then
+                        assertThat(whitePawn.isMovablePositionByDirection(new Position("a4"), Direction.NORTH)).isFalse();
+                        assertThat(blackPawn.isMovablePositionByDirection(new Position("a5"), Direction.NORTH)).isFalse();
+                    }
                 }
 
-                @Test
-                @DisplayName("두 칸 이상 움직일 수 없다")
-                void cannotMoveMoreTwoSpace() {
-                    //given
-                    Pawn whitePawn = new Pawn(Piece.Color.WHITE, new Position("a1"));
-                    Pawn blackPawn = new Pawn(Piece.Color.BLACK, new Position("a8"));
+                @Nested
+                @DisplayName("처음 움직이는게 아니라면")
+                class IsNotFirstMove {
+                    @Test
+                    @DisplayName("한 칸 움직일 수 있다")
+                    void canMoveOneSpace() {
+                        //given
+                        Pawn whitePawn = new Pawn(Piece.Color.WHITE, new Position("a1"));
+                        Pawn blackPawn = new Pawn(Piece.Color.BLACK, new Position("a8"));
 
-                    //when
-                    whitePawn.changePosition(new Position("a1"));
-                    blackPawn.changePosition(new Position("a8"));
+                        //when
+                        whitePawn.changePosition(new Position("a1"));
+                        blackPawn.changePosition(new Position("a8"));
 
-                    //then
-                    assertThat(whitePawn.isMovablePositionByDirection(new Position("a3"), Direction.NORTH)).isFalse();
-                    assertThat(whitePawn.isMovablePositionByDirection(new Position("a4"), Direction.NORTH)).isFalse();
-                    assertThat(blackPawn.isMovablePositionByDirection(new Position("a5"), Direction.SOUTH)).isFalse();
-                    assertThat(blackPawn.isMovablePositionByDirection(new Position("a6"), Direction.SOUTH)).isFalse();
+                        //then
+                        assertThat(whitePawn.isMovablePositionByDirection(new Position("a2"), Direction.NORTH)).isTrue();
+                        assertThat(blackPawn.isMovablePositionByDirection(new Position("a7"), Direction.SOUTH)).isTrue();
+                    }
+
+                    @Test
+                    @DisplayName("두 칸 이상 움직일 수 없다")
+                    void cannotMoveMoreTwoSpace() {
+                        //given
+                        Pawn whitePawn = new Pawn(Piece.Color.WHITE, new Position("a1"));
+                        Pawn blackPawn = new Pawn(Piece.Color.BLACK, new Position("a8"));
+
+                        //when
+                        whitePawn.changePosition(new Position("a1"));
+                        blackPawn.changePosition(new Position("a8"));
+
+                        //then
+                        assertThat(whitePawn.isMovablePositionByDirection(new Position("a3"), Direction.NORTH)).isFalse();
+                        assertThat(whitePawn.isMovablePositionByDirection(new Position("a4"), Direction.NORTH)).isFalse();
+                        assertThat(blackPawn.isMovablePositionByDirection(new Position("a5"), Direction.SOUTH)).isFalse();
+                        assertThat(blackPawn.isMovablePositionByDirection(new Position("a6"), Direction.SOUTH)).isFalse();
+                    }
                 }
             }
         }
