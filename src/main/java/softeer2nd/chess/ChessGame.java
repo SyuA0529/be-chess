@@ -28,7 +28,7 @@ public class ChessGame {
 
         verifyMoveCondition(sourcePiece, targetPos);
         verifyPositionColor(sourcePos, turnColor, IllegalTurnException::new);
-        verifyCheckmate(sourcePiece, targetPos);
+        verifyCheckSituation(sourcePiece, targetPos);
 
         movePiece(sourcePos, targetPos, sourcePiece);
         this.turnColor = getEnemyColor();
@@ -90,7 +90,7 @@ public class ChessGame {
         }
     }
 
-    private void verifyCheckmate(Piece sourcePiece, Position afterMovePosition) {
+    private void verifyCheckSituation(Piece sourcePiece, Position afterMovePosition) {
         Position kingPosition = getKingPosition(sourcePiece, afterMovePosition);
         for (Piece enemyPiece : board.getPiecesByColor(getEnemyColor())) {
             try {
@@ -122,7 +122,7 @@ public class ChessGame {
             }
             verifyPositionColor(enemyMovePosition, Color.NOCOLOR, IllegalMovePositionException::new);
         }
-        throw new CheckmateException();
+        throw new CheckException();
     }
 
     private void checkPawnMoveRule(Piece sourcePiece, Position targetPos) {

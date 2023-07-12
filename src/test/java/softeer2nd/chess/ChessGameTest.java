@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import softeer2nd.chess.board.Board;
-import softeer2nd.chess.exception.CheckmateException;
+import softeer2nd.chess.exception.CheckException;
 import softeer2nd.chess.exception.MoveBlankException;
 import softeer2nd.chess.exception.IllegalMovePositionException;
 import softeer2nd.chess.exception.IllegalTurnException;
@@ -167,9 +167,9 @@ class ChessGameTest {
                                     //when
                                     //then
                                     assertThatThrownBy(() -> chessGame.movePiece(new Position("a1"), new Position("b1")))
-                                            .isInstanceOf(CheckmateException.class);
+                                            .isInstanceOf(CheckException.class);
                                     assertThatThrownBy(() -> chessGame.movePiece(new Position("a2"), new Position("b3")))
-                                            .isInstanceOf(CheckmateException.class);
+                                            .isInstanceOf(CheckException.class);
                                 }
                             }
 
