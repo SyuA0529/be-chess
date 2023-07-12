@@ -1,9 +1,9 @@
 package softeer2nd.chess.exception;
 
-public class CheckmateException extends ChessException {
+public class CheckException extends ChessException {
     private static final String MESSAGE = "체크메이트 입니다.";
 
-    public CheckmateException() {
+    public CheckException() {
         super(MESSAGE);
     }
 }
