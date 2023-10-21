@@ -84,8 +84,8 @@ public class Board {
     public List<Piece> getSortedPiecesByPointAndColor(Color color, boolean asc) {
         List<Piece> pieces = new ArrayList<>();
         ranks.forEach(r -> pieces.addAll(r.getPiecesByColor(color)));
-        pieces.sort(Comparator.reverseOrder());
-        if (asc) {
+        pieces.sort(Comparator.comparingDouble(Piece::getDefaultPoint));
+        if (!asc) {
             Collections.reverse(pieces);
         }
         return pieces;
